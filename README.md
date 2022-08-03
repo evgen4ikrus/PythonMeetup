@@ -22,12 +22,14 @@ pip install -r requirements.txt
 touch .env
 ```
 Генерируем секретный ключ DJANGO в интерактивном режиме python:
-    1. `python`
-    2. `import django`
-    3. `from django.core.management.utils import get_random_secret_key`
-    4. `print(get_random_secret_key())`
-    5. Копируем строку в `.env` файл: `DJANGO_KEY='ваш ключ'`    
-    6. Для тестирования бота добавляем токен в `.env` файл: `BOT_TOKEN='токен вашего бота'`
+* `python`
+* `import django`
+* `from django.core.management.utils import get_random_secret_key`
+* `print(get_random_secret_key())`
+    
+Копируем строку в `.env` файл: `DJANGO_KEY='ваш ключ'` 
+
+Для тестирования бота добавляем токен в `.env` файл: `BOT_TOKEN='токен вашего бота'`
 
 Для тестирования бота добавляем токен в `.env` файл: `TG_BOT_TOKEN='токен вашего бота'`
 
