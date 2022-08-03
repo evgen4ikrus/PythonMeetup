@@ -21,6 +21,7 @@ def main_keyboard(update, context):
          InlineKeyboardButton('Задать вопрос спикеру', callback_data='Start_2')]
     ]
     context.bot.send_message(update.effective_chat.id, 'Это основное меню мероприятия', reply_markup=InlineKeyboardMarkup(keyboard))
+    
 
 # функция отрисовки меню 'Программа'
 def program_keyboard(update, context):
@@ -132,9 +133,9 @@ def button(update, context):
 
 
 # функция обработки текстовых сообщений
-def echo(update, context):
-    text = 'ECHO: ' + update.message.text 
-    context.bot.send_message(chat_id=update.effective_chat.id, 
+def forward_message(update, context):
+    text = update.message.text 
+    context.bot.send_message(chat_id='-1001758552115', 
                              text=text)    
 
 # функция обработки команды '/caps'
@@ -190,8 +191,8 @@ if __name__ == '__main__':
     dispatcher.add_handler(button_handler)
 
     # обработчик текстовых сообщений
-    echo_handler = MessageHandler(Filters.text & (~Filters.command), echo)
-    dispatcher.add_handler(echo_handler)
+    forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
+    dispatcher.add_handler(forward_message_handler)
 
     # обработчик команды '/caps'
     caps_handler = CommandHandler('caps', caps)
@@ -209,3 +210,5 @@ if __name__ == '__main__':
     updater.start_polling()
     # обработчик нажатия Ctrl+C
     updater.idle()
+    speaker_chat_id = '-1001758552115'
+    
