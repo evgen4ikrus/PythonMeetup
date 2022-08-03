@@ -26,8 +26,7 @@ touch .env
 * `import django`
 * `from django.core.management.utils import get_random_secret_key`
 * `print(get_random_secret_key())`
-
-
+    
 Копируем строку в `.env` файл: `DJANGO_KEY='ваш ключ'` 
 
 Для тестирования бота добавляем токен в `.env` файл: `TG_BOT_TOKEN='токен вашего бота'`
