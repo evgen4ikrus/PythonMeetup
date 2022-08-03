@@ -1,3 +1,46 @@
+from turtle import title
 from django.db import models
 
-# Create your models here.
+
+class Flow(models.Model):
+    title = models.CharField('Название потока', max_length=200)
+    
+    def __str__(self):
+        return self.title
+
+
+class Block(models.Model):
+    title = models.CharField('Название блока', max_length=200)
+    start_time = models.TimeField('Время начала',)
+    end_time = models.TimeField('Время окончания',)
+    flow = models.ForeignKey(
+        Flow, 
+        verbose_name='Поток',
+        related_name='blocks',
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return f'{self.title}: {self.start_time} - {self.end_time}'
+
+
+class Speaker(models.Model):
+    full_name = models.CharField('Полное имя', max_length=150)
+    job_title = models.CharField('Где и кем работает', max_length=200, blank=True)
+    id_telegram = models.IntegerField('Id telegram', max_length=50)
+
+    def __str__(self):
+        return self.full_name
+
+
+class Presentation(models.Model):
+    title = models.CharField('Название выступления', max_length=200)
+    speakers = models.ManyToManyField(
+        Speaker,
+        related_name='Presentations',
+        verbose_name='Спикер',
+        blank=True 
+    )
+
+    def __str__(self):
+        return self.title
