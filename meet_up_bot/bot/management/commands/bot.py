@@ -76,6 +76,102 @@ def finish_keyboard(update, context):
         ]
     context.bot.send_message(update.effective_chat.id, 'А это будет в заключении', reply_markup=InlineKeyboardMarkup(keyboard))
 
+# функция отрисовки меню 'Задать вопрос спикеру'
+def questions_keyboard(update, context):
+    keyboard = [
+        [InlineKeyboardButton('Вступительные мероприятия', callback_data='Questions_1')],
+        [InlineKeyboardButton('Поток "Эверест"', callback_data='Questions_2'),
+         InlineKeyboardButton('Поток "Альпы"', callback_data='Questions_3')],
+        [InlineKeyboardButton('Главное меню', callback_data='Questions_4')]
+    ]
+    context.bot.send_message(update.effective_chat.id, 'Вот программа мероприятия', reply_markup=InlineKeyboardMarkup(keyboard))
+
+
+
+# функция отрисовки меню-вопрос 'Вступительные мероприятия'
+def entry_questuions_keyboard(update, context):
+    keyboard = [
+        [InlineKeyboardButton('Фёдор Федоров', callback_data='Entry_questuion_1'),
+         InlineKeyboardButton('Денис Денисов', callback_data='Entry_questuion_2')],
+        [InlineKeyboardButton('Борис Борисов', callback_data='Entry_questuion_3'),
+         InlineKeyboardButton('Виталий Витальев', callback_data='Entry_questuion_4')],
+        [InlineKeyboardButton('Сергей Сергеев', callback_data='Entry_questuion_5'),
+         InlineKeyboardButton('Константин Константинов', callback_data='Entry_questuion_6')],
+        [InlineKeyboardButton('Назад', callback_data='Entry_questuion_7')]
+    ]
+    context.bot.send_message(update.effective_chat.id, 'Спикеры "вступления"', reply_markup=InlineKeyboardMarkup(keyboard))
+
+# функция отрисовки меню-вопрос 'Проект "Эверест"'
+def everest_questuions_keyboard(update, context):
+    keyboard = [
+        [InlineKeyboardButton('12:00 – 13:30', callback_data='Everest_questuion_1'),
+         InlineKeyboardButton('14:00 – 16:30', callback_data='Everest_questuion_2')],
+        [InlineKeyboardButton('Назад', callback_data='Everest_questuion_3')]
+    ]
+    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Эверест"', reply_markup=InlineKeyboardMarkup(keyboard))
+
+# функция отрисовки меню-вопрос 'Проект "Эверест" 12:00 - 13:30'
+def everest_1_questuions_keyboard(update, context):
+    keyboard = [
+        [InlineKeyboardButton('Анна Аннова', callback_data='Everest_questuion_1.1'),
+         InlineKeyboardButton('Сергей Володин', callback_data='Everest_questuion_1.2')],
+        [InlineKeyboardButton('Михаил Михалов', callback_data='Everest_questuion_1.3'),
+         InlineKeyboardButton('Максим Максимов,', callback_data='Everest_questuion_1.4')],
+        [InlineKeyboardButton('Артем Артемов', callback_data='Everest_questuion_1.5')],
+        [InlineKeyboardButton('Назад', callback_data='Everest_questuion_1.6')]
+    ]
+    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Эверест" c 12:00', reply_markup=InlineKeyboardMarkup(keyboard))
+
+# функция отрисовки меню-вопрос 'Проект "Эверест" 14:00 - 16:30'
+def everest_2_questuions_keyboard(update, context):
+    keyboard = [
+        [InlineKeyboardButton('Кирилл Кириенко', callback_data='Everest_questuion_2.1'),
+         InlineKeyboardButton('Леся Самойлова', callback_data='Everest_questuion_2.2')],
+        [InlineKeyboardButton('Надежда Бабкина', callback_data='Everest_questuion_2.3'),
+         InlineKeyboardButton('Дмитрий Медведев', callback_data='Everest_questuion_2.4')],
+        [InlineKeyboardButton('Евгений Евгеньев', callback_data='Everest_questuion_2.5'),
+         InlineKeyboardButton('Екатерина Ворот', callback_data='Everest_questuion_2.6')],
+        [InlineKeyboardButton('Татьяна Вилет', callback_data='Everest_questuion_2.7'),
+         InlineKeyboardButton('Викторов Артем', callback_data='Everest_questuion_2.8')],
+        [InlineKeyboardButton('Евгений Валуев', callback_data='Everest_questuion_2.9')],
+        [InlineKeyboardButton('Назад', callback_data='Everest_questuion_2.10')]
+    ]
+    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Эверест" c 14:00', reply_markup=InlineKeyboardMarkup(keyboard))
+
+# функция отрисовки меню-вопрос 'Проект "Альпы"'
+def alps_questuions_keyboard(update, context):
+    keyboard = [
+        [InlineKeyboardButton('12:00 – 13:30', callback_data='Alps_questuion_1'),
+         InlineKeyboardButton('14:00 – 16:30', callback_data='Alps_questuion_2')],
+        [InlineKeyboardButton('Назад', callback_data='Alps_questuion_3')]
+    ]
+    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Альпы"', reply_markup=InlineKeyboardMarkup(keyboard))
+
+# функция отрисовки меню-вопрос 'Проект "Альпы" 12:00 - 13:30'
+def alps_1_questuions_keyboard(update, context):
+    keyboard = [
+        [InlineKeyboardButton('Сергей Кулькин', callback_data='Alps_questuion_1.1'),
+         InlineKeyboardButton('Игорь Игорев', callback_data='Alps_questuion_1.2')],
+        [InlineKeyboardButton('Дмитрий Бирюков', callback_data='Alps_questuion_1.3'),
+         InlineKeyboardButton('Андрей Петров,', callback_data='Alps_questuion_1.4')],
+        [InlineKeyboardButton('Назад', callback_data='Alps_questuion_1.5')]
+    ]
+    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Альпы" c 12:00', reply_markup=InlineKeyboardMarkup(keyboard))
+
+# функция отрисовки меню-вопрос 'Проект "Альпы" 14:00 - 16:30'
+def alps_2_questuions_keyboard(update, context):
+    keyboard = [
+        [InlineKeyboardButton('Алексей Петров', callback_data='Alps_questuion_2.1'),
+         InlineKeyboardButton('Константин Константинопольский', callback_data='Alps_questuion_2.2')],
+        [InlineKeyboardButton('Александр Бродский', callback_data='Alps_questuion_2.3'),
+         InlineKeyboardButton('Алексей Жирков', callback_data='Alps_questuion_2.4')],
+        [InlineKeyboardButton('Денис Глушаков', callback_data='Alps_questuion_2.5'),
+         InlineKeyboardButton('Колбин Дмитрий', callback_data='Alps_questuion_2.6')],
+        [InlineKeyboardButton('Алексей Пушилин', callback_data='Alps_questuion_2.7')],
+        [InlineKeyboardButton('Назад', callback_data='Alps_questuion_2.8')]
+        ]
+    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Альпы" c 14:00', reply_markup=InlineKeyboardMarkup(keyboard))
+
 # функция обработки кнопок ветка "Программа"
 def button(update, context):
     q = update.callback_query
@@ -83,7 +179,7 @@ def button(update, context):
     if q.data == 'Start_1':
         return program_keyboard(update, context)
     elif q.data == 'Start_2':
-        pass
+        return questions_keyboard(update, context)
     elif q.data == 'Program_1':
         return entry_keyboard(update, context)
     elif q.data == 'Program_2':
@@ -130,6 +226,98 @@ def button(update, context):
         pass
     elif q.data == 'Finish_3':
         return program_keyboard(update, context)
+    elif q.data == 'Questions_1':
+        return entry_questuions_keyboard(update, context)
+    elif q.data == 'Questions_2':
+        return everest_questuions_keyboard(update, context)
+    elif q.data == 'Questions_3':
+        return alps_questuions_keyboard(update, context)
+    elif q.data == 'Questions_4':
+        return main_keyboard(update, context)
+    elif q.data == 'Entry_questuion_1':
+        pass
+    elif q.data == 'Entry_questuion_2':
+        pass
+    elif q.data == 'Entry_questuion_3':
+        pass
+    elif q.data == 'Entry_questuion_4':
+        pass
+    elif q.data == 'Entry_questuion_5':
+        pass
+    elif q.data == 'Entry_questuion_6':
+        pass
+    elif q.data == 'Entry_questuion_7':
+        return questions_keyboard(update, context)
+    elif q.data == 'Everest_questuion_1':
+        return everest_1_questuions_keyboard(update, context)
+    elif q.data == 'Everest_questuion_2':
+        return everest_2_questuions_keyboard(update, context)
+    elif q.data == 'Everest_questuion_3':
+        return questions_keyboard(update, context)
+    elif q.data == 'Everest_questuion_1.1':
+        pass
+    elif q.data == 'Everest_questuion_1.2':
+        pass
+    elif q.data == 'Everest_questuion_1.3':
+        pass
+    elif q.data == 'Everest_questuion_1.4':
+        pass
+    elif q.data == 'Everest_questuion_1.5':
+        pass
+    elif q.data == 'Everest_questuion_1.6':
+        return everest_questuions_keyboard(update, context)
+    elif q.data == 'Everest_questuion_2.1':
+        pass
+    elif q.data == 'Everest_questuion_2.2':
+        pass
+    elif q.data == 'Everest_questuion_2.3':
+        pass
+    elif q.data == 'Everest_questuion_2.4':
+        pass
+    elif q.data == 'Everest_questuion_2.5':
+        pass
+    elif q.data == 'Everest_questuion_2.6':
+        pass
+    elif q.data == 'Everest_questuion_2.7':
+        pass
+    elif q.data == 'Everest_questuion_2.8':
+        pass
+    elif q.data == 'Everest_questuion_2.9':
+        pass
+    elif q.data == 'Everest_questuion_2.10':
+        return everest_questuions_keyboard(update, context)
+    elif q.data == 'Alps_questuion_1':
+        return alps_1_questuions_keyboard(update, context)
+    elif q.data == 'Alps_questuion_2':
+        return alps_2_questuions_keyboard(update, context)
+    elif q.data == 'Alps_questuion_3':
+        return questions_keyboard(update, context)
+    elif q.data == 'Alps_questuion_1.1':
+        pass
+    elif q.data == 'Alps_questuion_1.2':
+        pass
+    elif q.data == 'Alps_questuion_1.3':
+        pass
+    elif q.data == 'Alps_questuion_1.4':
+        pass
+    elif q.data == 'Alps_questuion_1.5':
+        return alps_questuions_keyboard(update, context)
+    elif q.data == 'Alps_questuion_2.1':
+        pass
+    elif q.data == 'Alps_questuion_2.2':
+        pass
+    elif q.data == 'Alps_questuion_2.3':
+        pass
+    elif q.data == 'Alps_questuion_2.4':
+        pass
+    elif q.data == 'Alps_questuion_2.5':
+        pass
+    elif q.data == 'Alps_questuion_2.6':
+        pass
+    elif q.data == 'Alps_questuion_2.7':
+        pass
+    elif q.data == 'Alps_questuion_2.8':
+        return alps_questuions_keyboard(update, context)
 
 
 class Command(BaseCommand):
