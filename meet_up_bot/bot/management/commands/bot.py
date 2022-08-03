@@ -5,6 +5,7 @@ import time
 from telegram import InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 from telegram.ext import MessageHandler, Filters, InlineQueryHandler
+from django.core.management.base import BaseCommand
 
 
 # функция обработки команды '/start'
@@ -170,8 +171,8 @@ def unknown(update, context):
                              text="Такой команды нет, попробуйте еще раз")
 
 
+class Command(BaseCommand):
 
-if __name__ == '__main__':
     load_dotenv()
     token = os.getenv("TG_BOT_TOKEN")
     bot = telegram.Bot(token=token)
