@@ -21,12 +21,29 @@ pip install -r requirements.txt
 ```
 touch .env
 ```
+Генерируем секретный ключ DJANGO в интерактивном режиме python:
+* `python`
+* `import django`
+* `from django.core.management.utils import get_random_secret_key`
+* `print(get_random_secret_key())`
+    
+Копируем строку в `.env` файл: `DJANGO_KEY='ваш ключ'` 
 
 Для тестирования бота добавляем токен в `.env` файл: `TG_BOT_TOKEN='токен вашего бота'`
 
+Для тестирования бота добавляем токен в `.env` файл: `TG_BOT_TOKEN='токен вашего бота'`
 
-### 5. Запускаем модуль бота:
+### 5. Переходим в директорию проекта и выполняем миграции в ДБ: 
 ```
-python bot.py
+cd meet_up_bot/
+
+python manage.py makemigrations db; python manage.py migrate
+```
+#### Важно: 
+Выполнять этот шаг нужно при изменении models.py
+
+### 6. Запускаем модуль бота:
+```
+python manage.py bot
 ```
 На комманду `/start` должен отреагировать, значит проект развернулся, все ок
