@@ -3,7 +3,6 @@ from django.db import models
 
 class Flow(models.Model):
     title = models.CharField('Название потока', max_length=200)
-    presentation_flow = models.BooleanField(null=True)
     def __str__(self):
         return self.title
 
