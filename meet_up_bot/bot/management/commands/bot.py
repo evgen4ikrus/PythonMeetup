@@ -496,6 +496,7 @@ class Command(BaseCommand):
     load_dotenv()
     token = os.getenv("TG_BOT_TOKEN")
     bot = telegram.Bot(token=token)
+    global dispatcher
     updater = Updater(token=token)
     dispatcher = updater.dispatcher
     # обработчик команды '/start'
