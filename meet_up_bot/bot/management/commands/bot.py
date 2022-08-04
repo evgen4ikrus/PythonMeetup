@@ -25,7 +25,7 @@ def main_keyboard(update, context):
 
 # функция отрисовки меню 'Программа'
 def program_keyboard(update, context):
-    keyboard=[[InlineKeyboardButton('Главное меню', callback_data='Program_5')]]
+    keyboard=[[InlineKeyboardButton('Главное меню', callback_data='Main_menu')]]
     flows = Flow.objects.all()
     for number, flow in enumerate(flows):
         button = [InlineKeyboardButton(f'{flow.title}', callback_data=f'Program_{number}')]
@@ -190,7 +190,7 @@ def button(update, context):
         return alps_keyboard(update, context)
     elif q.data == 'Program_4':
         return finish_keyboard(update, context)
-    elif q.data == 'Program_5':
+    elif q.data == 'Main_menu':
         return main_keyboard(update, context)
     elif q.data == 'Entry_1':
         pass
