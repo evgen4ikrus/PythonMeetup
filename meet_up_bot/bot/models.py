@@ -28,7 +28,7 @@ class Block(models.Model):
     description_addition = models.CharField(max_length=200, blank=True)
     start_time = models.TimeField('Время начала',)
     end_time = models.TimeField('Время окончания',)
-    Flow_group = models.ForeignKey(
+    flow_group = models.ForeignKey(
         Flow_group, 
         verbose_name='Группа потока',
         related_name='blocks',
