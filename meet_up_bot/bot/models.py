@@ -42,7 +42,7 @@ class Block(models.Model):
 class Speaker(models.Model):
     full_name = models.CharField('Полное имя', max_length=150)
     job_title = models.CharField('Где и кем работает', max_length=200, blank=True)
-    id_telegram = models.IntegerField('Id telegram', max_length=50)
+    id_telegram = models.IntegerField('Id telegram')
     
 
     def __str__(self):
