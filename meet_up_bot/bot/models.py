@@ -1,10 +1,9 @@
-from turtle import title
 from django.db import models
 
 
 class Flow(models.Model):
     title = models.CharField('Название потока', max_length=200)
-    
+    presentation_flow = models.BooleanField(null=True)
     def __str__(self):
         return self.title
 
@@ -13,6 +12,7 @@ class Flow_group(models.Model):
     title = models.CharField('Название группы потока', max_length=200)
     start_time = models.TimeField('Время начала',)
     end_time = models.TimeField('Время окончания',)
+    presentation_group = models.BooleanField(null=True)
     flow = models.ForeignKey(
         Flow, 
         verbose_name='Поток',
