@@ -6,11 +6,11 @@ from telegram import InlineQueryResultArticle, InputTextMessageContent, InlineKe
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 from telegram.ext import MessageHandler, Filters, InlineQueryHandler
 from django.core.management.base import BaseCommand
-
+from bot.models import Flow_group, Flow
 
 # функция обработки команды '/start'
 def start(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, 
+    context.bot.send_message(chat_id=update.effective_chat.id,
                              text="Здравствуйте. Это официальный бот по поддержке участников")
     time.sleep(4)
     return main_keyboard(update, context)
@@ -25,13 +25,12 @@ def main_keyboard(update, context):
 
 # функция отрисовки меню 'Программа'
 def program_keyboard(update, context):
-    keyboard = [
-        [InlineKeyboardButton('Вступительные мероприятия', callback_data='Program_1')],
-        [InlineKeyboardButton('Поток "Эверест"', callback_data='Program_2'),
-         InlineKeyboardButton('Поток "Альпы"', callback_data='Program_3')],
-        [InlineKeyboardButton('Заключительные мероприятия', callback_data='Program_4')],
-        [InlineKeyboardButton('Главное меню', callback_data='Program_5')]
-    ]
+    keyboard=[[InlineKeyboardButton('Главное меню', callback_data='Program_5')]]
+    flows = Flow.objects.all()
+    for number, flow in enumerate(flows):
+        button = [InlineKeyboardButton(f'{flow.title}', callback_data=f'Program_{number}')]
+        keyboard.insert(0,button)
+    print(keyboard)
     context.bot.send_message(update.effective_chat.id, 'Вот программа мероприятия', reply_markup=InlineKeyboardMarkup(keyboard))
 
 # функция отрисовки меню 'Вступительные мероприятия'
