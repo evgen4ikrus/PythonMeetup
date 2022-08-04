@@ -6,7 +6,6 @@ from telegram import InlineQueryResultArticle, InputTextMessageContent, InlineKe
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 from telegram.ext import MessageHandler, Filters, InlineQueryHandler
 from django.core.management.base import BaseCommand
-from bot.models import Flow
 
 
 # функция обработки команды '/start'
@@ -493,7 +492,7 @@ def forward_message(update, context):
 
 
 class Command(BaseCommand):
-    print(Flow.objects.all())
+
     load_dotenv()
     token = os.getenv("TG_BOT_TOKEN")
     bot = telegram.Bot(token=token)
