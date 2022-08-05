@@ -68,7 +68,7 @@ class Presentation(models.Model):
     title = models.CharField('Название выступления', max_length=200)
     speakers = models.ManyToManyField(
         Speaker,
-        related_name='presentations',
+        related_name='Presentations',
         verbose_name='Спикер',
         blank=True 
     )
