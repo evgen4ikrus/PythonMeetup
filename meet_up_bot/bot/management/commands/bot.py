@@ -241,7 +241,7 @@ def button(update, context):
         flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Федору')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
+        speaker_chat_id = '1774521104'
         forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
         return dispatcher.add_handler(forward_message_handler)
     elif q.data == 'Entry_questuion_2':
@@ -511,8 +511,7 @@ class Command(BaseCommand):
     button_handler = CallbackQueryHandler(button)
     dispatcher.add_handler(button_handler)
 
-
-
+    
     # запуск прослушивания сообщений
     updater.start_polling()
     # обработчик нажатия Ctrl+C
