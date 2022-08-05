@@ -32,58 +32,26 @@ def program_keyboard(update, context):
         keyboard.append(button)
     context.bot.send_message(update.effective_chat.id, 'Вот программа мероприятия', reply_markup=InlineKeyboardMarkup(keyboard))
 
-# ууууууууууууууууууууууууууууууууууууу
-def table(update, context, bases):
-    keyboard = [[InlineKeyboardButton('Главное меню', callback_data='Main_menu')]]
+# функция отрисовки меню всех блоков
+def table_blocks(update, context, bases):
+    keyboard = [[InlineKeyboardButton('Назад', callback_data='Back')]]
     for number, name in enumerate(bases):
-        button = [InlineKeyboardButton(f'{name.title}', callback_data=f'Program_{number}')]
-        keyboard.insert(0, button)
-        print(name.Flow_group)
-    context.bot.send_message(update.effective_chat.id, 'Это будет во вступительной части', reply_markup=InlineKeyboardMarkup(keyboard))
+        button = [InlineKeyboardButton(f'{name.start_time} {name.title}', callback_data=f'{name.flow_group.flow.title}_{number+1}')]
+        keyboard.append(button)
+    context.bot.send_message(update.effective_chat.id, 'В этом блоке будет следующее', reply_markup=InlineKeyboardMarkup(keyboard))
 
-bases = Block.objects.all()
+flows = Flow.objects.all()
+block_entry = Block.objects.filter(flow_group__flow__title__contains='*Вступительные мероприятия')
+block_everest = Block.objects.filter(flow_group__flow__title__contains='*Поток "Эверест"')
+block_alps = Block.objects.filter(flow_group__flow__title__contains='*Поток "Альпы"')
+block_finish = Block.objects.filter(flow_group__flow__title__contains='*Заключительные мероприятия')
 
-# функция отрисовки меню 'Вступительные мероприятия'
-def entry_keyboard(update, context):
-    keyboard = [
-        [InlineKeyboardButton('09:00 Регистрация', callback_data='Entry_1')],
-        [InlineKeyboardButton('10:00 Дискуссия – пути развития рынка разработки', callback_data='Entry_2'),
-         InlineKeyboardButton('11:30 Нетворкинг', callback_data='Entry_3')],
-        [InlineKeyboardButton('Назад', callback_data='Entry_4')],
-        ]
-    context.bot.send_message(update.effective_chat.id, 'Это будет во вступительной части', reply_markup=InlineKeyboardMarkup(keyboard))
+# def info_blocks(update, context, bases, name):
+#     print(bases.name.description_addition)
+#     context.bot.send_message(chat_id=update.effective_chat.id,
+#                              text="Здравствуйте. Это официальный бот по поддержке участников")
 
-# функция отрисовки меню Поток "Эверест"
-def everest_keyboard(update, context):
-    keyboard = [
-        [InlineKeyboardButton('12:00 Блок «Коммуникационные инновации» ', callback_data='Everest_1')],
-        [InlineKeyboardButton('13:30 Обед', callback_data='Everest_2')],
-        [InlineKeyboardButton('14:00 Блок «Построение предективной аналитики» ', callback_data='Everest_3')],
-        [InlineKeyboardButton('14:50  Блок  «Автоматизация рекламных коммуникаций»', callback_data='Everest_4')],
-        [InlineKeyboardButton('15:40  Блок  «Системы управления коммуникациями компании с клиентами»', callback_data='Everest_5')],
-        [InlineKeyboardButton('Назад', callback_data='Everest_6')]
-        ]
-    context.bot.send_message(update.effective_chat.id, 'Программа потока "Эверест"', reply_markup=InlineKeyboardMarkup(keyboard))
 
-# функция отрисовки меню Поток "Альпы"
-def alps_keyboard(update, context):
-    keyboard = [
-        [InlineKeyboardButton('12:00 Блок «Автоматизация продаж» ', callback_data='Alps_1')],
-        [InlineKeyboardButton('13:30 Нетворкинг', callback_data='Alps_2')],
-        [InlineKeyboardButton('14:20 Блок «Построение предективной аналитики»', callback_data='Alps_3')],
-        [InlineKeyboardButton('15:20 Блок «Автоматизация рекламных коммуникаций»', callback_data='Alps_4')],
-        [InlineKeyboardButton('Назад', callback_data='Alps_5')],
-        ]
-    context.bot.send_message(update.effective_chat.id, 'Программа потока "Альпы"', reply_markup=InlineKeyboardMarkup(keyboard))
-
-# функция отрисовки меню 'Заключительные мероприятия'
-def finish_keyboard(update, context):
-    keyboard = [
-        [InlineKeyboardButton('16:40 Нетворкинг', callback_data='Finish_1'),
-         InlineKeyboardButton('17:00 Премия "BMA 2020"', callback_data='Finish_2')],
-        [InlineKeyboardButton('Назад', callback_data='Finish_3')],
-        ]
-    context.bot.send_message(update.effective_chat.id, 'А это будет в заключении', reply_markup=InlineKeyboardMarkup(keyboard))
 
 # функция отрисовки меню 'Задать вопрос спикеру'
 def questions_keyboard(update, context):
@@ -193,22 +161,22 @@ def button(update, context):
     elif q.data == 'Start_2':
         return questions_keyboard(update, context)
     elif q.data == 'Program_1':
-        return table(update, context, bases)
+        return table_blocks(update, context, bases=block_entry)
     elif q.data == 'Program_2':
-        return everest_keyboard(update, context)
+        return table_blocks(update, context, bases=block_everest)
     elif q.data == 'Program_3':
-        return alps_keyboard(update, context)
+        return table_blocks(update, context, bases=block_alps)
     elif q.data == 'Program_4':
-        return finish_keyboard(update, context)
+        return table_blocks(update, context, bases=block_finish)
     elif q.data == 'Main_menu':
         return main_keyboard(update, context)
-    elif q.data == 'Entry_1':
+    elif q.data == '*Вступительные мероприятия_1':
+        return info_blocks(update, context, bases=block_entry, name='*Регистрация')
+    elif q.data == '*Вступительные мероприятия_2':
         pass
-    elif q.data == 'Entry_2':
+    elif q.data == '*Вступительные мероприятия_3':
         pass
-    elif q.data == 'Entry_3':
-        pass
-    elif q.data == 'Entry_4':
+    elif q.data == 'Back':
         return program_keyboard(update, context)
     elif q.data == 'Everest_1':
         pass
