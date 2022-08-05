@@ -5,7 +5,11 @@ class Flow(models.Model):
     title = models.CharField('Название потока', max_length=200)
     def __str__(self):
         return self.title
-
+    
+    class Meta:
+        verbose_name_plural = "Мероприятия"
+        verbose_name = "Мероприятие"
+        
 
 class Flow_group(models.Model):
     title = models.CharField('Название группы потока', max_length=200)
@@ -21,6 +25,10 @@ class Flow_group(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name_plural = "Группы блоков по времени"
+        verbose_name = "Группа блоков по времени"
 
 
 class Block(models.Model):
@@ -38,15 +46,22 @@ class Block(models.Model):
     def __str__(self):
         return f'{self.title}: {self.start_time} - {self.end_time}'
 
+    class Meta:
+        verbose_name_plural = "Блоки выступлений/перерывов"
+        verbose_name = "Блок выступлений/перерывров"
+
 
 class Speaker(models.Model):
     full_name = models.CharField('Полное имя', max_length=150)
     job_title = models.CharField('Где и кем работает', max_length=200, blank=True)
     id_telegram = models.IntegerField('Id telegram')
     
-
     def __str__(self):
         return self.full_name
+
+    class Meta:
+        verbose_name_plural = "Спикеры/организаторы"
+        verbose_name = "Спикер/организатор"
 
 
 class Presentation(models.Model):
@@ -67,3 +82,7 @@ class Presentation(models.Model):
 
     def __str__(self):
         return self.title
+
+    class Meta:
+        verbose_name_plural = "Презантации"
+        verbose_name = "Презентация"
