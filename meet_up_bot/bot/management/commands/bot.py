@@ -11,9 +11,7 @@ from bot.models import Flow_group, Flow, Block
 
 # функция обработки команды '/start'
 def start(update, context):
-    #global student_chat_id
-    #student_chat_id = update.effective_chat.id
-    
+        
     context.bot.send_message(chat_id=update.effective_chat.id,
                              text="Здравствуйте. Это официальный бот по поддержке участников")
     time.sleep(1)
@@ -49,12 +47,6 @@ block_entry = Block.objects.filter(flow_group__flow__title__contains='*Всту�
 block_everest = Block.objects.filter(flow_group__flow__title__contains='*Поток "Эверест"')
 block_alps = Block.objects.filter(flow_group__flow__title__contains='*Поток "Альпы"')
 block_finish = Block.objects.filter(flow_group__flow__title__contains='*Заключительные мероприятия')
-
-# def info_blocks(update, context, bases, name):
-#     print(bases.name.description_addition)
-#     context.bot.send_message(chat_id=update.effective_chat.id,
-#                              text="Здравствуйте. Это официальный бот по поддержке участников")
-
 
 
 # функция отрисовки меню 'Задать вопрос спикеру'
