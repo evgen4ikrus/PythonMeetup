@@ -1,12 +1,13 @@
-import telegram
-from dotenv import load_dotenv
 import os
 import time
-from telegram import InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
-from telegram.ext import MessageHandler, Filters, InlineQueryHandler
+
+import telegram
+from bot.models import Flow, Block, Presentation, Speaker
 from django.core.management.base import BaseCommand
-from bot.models import Flow_group, Flow, Block, Presentation, Speaker
+from dotenv import load_dotenv
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import MessageHandler, Filters
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 
 
 # функция обработки команды '/start'
@@ -16,37 +17,71 @@ def start(update, context):
     time.sleep(4)
     return main_keyboard(update, context)
 
+
 # функция отрисовки начальной клавиатуры
 def main_keyboard(update, context):
     keyboard = [
         [InlineKeyboardButton('Программа', callback_data='Start_1'),
          InlineKeyboardButton('Задать вопрос спикеру', callback_data='Start_2')]
     ]
-    context.bot.send_message(update.effective_chat.id, 'Это основное меню мероприятия', reply_markup=InlineKeyboardMarkup(keyboard))
+    context.bot.send_message(update.effective_chat.id, 'Это основное меню мероприятия',
+                             reply_markup=InlineKeyboardMarkup(keyboard))
+
 
 # функция отрисовки меню 'Программа'
 def program_keyboard(update, context):
-    keyboard=[[InlineKeyboardButton('Главное меню', callback_data='Main_menu')]]
+    keyboard = [[InlineKeyboardButton('Главное меню', callback_data='Main_menu')]]
     flows = Flow.objects.all()
     for number, flow in enumerate(flows, start=1):
         button = [InlineKeyboardButton(f'{flow.title}', callback_data=f'Program_{number}')]
         keyboard.append(button)
-    context.bot.send_message(update.effective_chat.id, 'Вот программа мероприятия', reply_markup=InlineKeyboardMarkup(keyboard))
+    context.bot.send_message(update.effective_chat.id, 'Вот программа мероприятия',
+                             reply_markup=InlineKeyboardMarkup(keyboard))
+
+# это функция для получения названия кнопок для клавиатур по потокам
+def buttons_flow_names(structure):
+    buttons = {}
+    for number, element in enumerate(structure, start=1):
+        block = Block.objects.filter(flow_group__flow__title__contains=element.title)
+        buttons[f'block_{number}'] = block
+    return buttons
+
+
+# это функция для получения названия кнопок для блоков без презентаций
+def buttons_additional_block_names(structure):
+    buttons = {}
+    for number, element in enumerate(structure, start=1):
+        block = element.title
+        buttons[f'block_{number}'] = block
+    return buttons
+
+
+# это функция для получения названия кнопок для блоков с презентациями
+def buttons_block_names(structure):
+    buttons = {}
+    for number, element in enumerate(structure, start=1):
+        block = Presentation.objects.filter(block__title__contains=element.title)
+        buttons[f'block_{number}'] = block
+    return buttons
+
 
 # функция отрисовки меню всех блоков
-def table_blocks(update, context, bases):
+def table_blocks(update, context, bases, button_name):
     keyboard = [[InlineKeyboardButton('Назад', callback_data='Back')]]
     for number, name in enumerate(bases, start=1):
-        button = [InlineKeyboardButton(f'{name.start_time} {name.title}', callback_data=f'{name.flow_group.flow.title}_{number}')]
+        button = [InlineKeyboardButton(f'{name.start_time} {name.title}', callback_data=f'{button_name}_{number}')]
         keyboard.append(button)
-    context.bot.send_message(update.effective_chat.id, 'В этом блоке будет следующее', reply_markup=InlineKeyboardMarkup(keyboard))
+    context.bot.send_message(update.effective_chat.id, 'В этом блоке будет следующее',
+                             reply_markup=InlineKeyboardMarkup(keyboard))
 
-# функция открытия файла нужна для info_blocks
+
+# функция открытия файла нужна для info_blocks, add_description_addition
 def open_file(name):
     a = open(name, 'r')
     data = a.read()
     a.close()
     return data
+
 
 # функция расшифровки любого блока c презентациями
 def info_blocks(update, context, bases):
@@ -54,23 +89,26 @@ def info_blocks(update, context, bases):
         info.write(f'{bases[0].block.start_time} - {bases[0].block.end_time} \n')
         info.write(bases[0].block.title + '\n' + '\n')
         for presentation in bases:
-            info.write(presentation.title +'\n')
+            info.write(presentation.title + '\n')
             speakers = Speaker.objects.filter(presentations__title=presentation)
             for speaker in speakers:
-                info.write(speaker.full_name +'\n')
-                info.write(speaker.job_title +'\n' + '\n')
+                info.write(speaker.full_name + '\n')
+                info.write(speaker.job_title + '\n' + '\n')
     context.bot.send_message(update.effective_chat.id, open_file('инфо_блок.txt'))
     os.remove('инфо_блок.txt')
+
 
 # функция расшифровки любого блока без презентаций
 def add_description_addition(update, context, title, number=1):
     blocks = Block.objects.filter(title__contains=title)
     with open('инфо_блок.txt', 'a') as info:
-        info.write(f'{blocks[number-1].start_time} - {blocks[number-1].end_time} \n')
-        info.write(blocks[number-1].title + '\n')
-        info.write(blocks[number-1].description_addition + '\n')
+        info.write(f'{blocks[number - 1].start_time} - {blocks[number - 1].end_time} \n')
+        info.write(blocks[number - 1].title + '\n')
+        info.write(blocks[number - 1].description_addition + '\n')
     context.bot.send_message(update.effective_chat.id, open_file('инфо_блок.txt'))
     os.remove('инфо_блок.txt')
+
+
 
 # функция отрисовки меню 'Задать вопрос спикеру'
 def questions_keyboard(update, context):
@@ -80,7 +118,9 @@ def questions_keyboard(update, context):
          InlineKeyboardButton('Поток "Альпы"', callback_data='Questions_3')],
         [InlineKeyboardButton('Главное меню', callback_data='Questions_4')]
     ]
-    context.bot.send_message(update.effective_chat.id, 'Вот программа мероприятия', reply_markup=InlineKeyboardMarkup(keyboard))
+    context.bot.send_message(update.effective_chat.id, 'Вот программа мероприятия',
+                             reply_markup=InlineKeyboardMarkup(keyboard))
+
 
 # функция отрисовки меню-вопрос 'Вступительные мероприятия'
 def entry_questuions_keyboard(update, context):
@@ -93,7 +133,9 @@ def entry_questuions_keyboard(update, context):
          InlineKeyboardButton('Константин Константинов', callback_data='Entry_questuion_6')],
         [InlineKeyboardButton('Назад', callback_data='Entry_questuion_7')]
     ]
-    context.bot.send_message(update.effective_chat.id, 'Спикеры "вступления"', reply_markup=InlineKeyboardMarkup(keyboard))
+    context.bot.send_message(update.effective_chat.id, 'Спикеры "вступления"',
+                             reply_markup=InlineKeyboardMarkup(keyboard))
+
 
 # функция отрисовки меню-вопрос 'Проект "Эверест"'
 def everest_questuions_keyboard(update, context):
@@ -102,7 +144,9 @@ def everest_questuions_keyboard(update, context):
          InlineKeyboardButton('14:00 – 16:30', callback_data='Everest_questuion_2')],
         [InlineKeyboardButton('Назад', callback_data='Everest_questuion_3')]
     ]
-    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Эверест"', reply_markup=InlineKeyboardMarkup(keyboard))
+    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Эверест"',
+                             reply_markup=InlineKeyboardMarkup(keyboard))
+
 
 # функция отрисовки меню-вопрос 'Проект "Эверест" 12:00 - 13:30'
 def everest_1_questuions_keyboard(update, context):
@@ -114,7 +158,9 @@ def everest_1_questuions_keyboard(update, context):
         [InlineKeyboardButton('Артем Артемов', callback_data='Everest_questuion_1.5')],
         [InlineKeyboardButton('Назад', callback_data='Everest_questuion_1.6')]
     ]
-    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Эверест" c 12:00', reply_markup=InlineKeyboardMarkup(keyboard))
+    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Эверест" c 12:00',
+                             reply_markup=InlineKeyboardMarkup(keyboard))
+
 
 # функция отрисовки меню-вопрос 'Проект "Эверест" 14:00 - 16:30'
 def everest_2_questuions_keyboard(update, context):
@@ -130,7 +176,9 @@ def everest_2_questuions_keyboard(update, context):
         [InlineKeyboardButton('Евгений Валуев', callback_data='Everest_questuion_2.9')],
         [InlineKeyboardButton('Назад', callback_data='Everest_questuion_2.10')]
     ]
-    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Эверест" c 14:00', reply_markup=InlineKeyboardMarkup(keyboard))
+    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Эверест" c 14:00',
+                             reply_markup=InlineKeyboardMarkup(keyboard))
+
 
 # функция отрисовки меню-вопрос 'Проект "Альпы"'
 def alps_questuions_keyboard(update, context):
@@ -139,7 +187,9 @@ def alps_questuions_keyboard(update, context):
          InlineKeyboardButton('14:00 – 16:30', callback_data='Alps_questuion_2')],
         [InlineKeyboardButton('Назад', callback_data='Alps_questuion_3')]
     ]
-    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Альпы"', reply_markup=InlineKeyboardMarkup(keyboard))
+    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Альпы"',
+                             reply_markup=InlineKeyboardMarkup(keyboard))
+
 
 # функция отрисовки меню-вопрос 'Проект "Альпы" 12:00 - 13:30'
 def alps_1_questuions_keyboard(update, context):
@@ -150,7 +200,9 @@ def alps_1_questuions_keyboard(update, context):
          InlineKeyboardButton('Андрей Петров,', callback_data='Alps_questuion_1.4')],
         [InlineKeyboardButton('Назад', callback_data='Alps_questuion_1.5')]
     ]
-    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Альпы" c 12:00', reply_markup=InlineKeyboardMarkup(keyboard))
+    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Альпы" c 12:00',
+                             reply_markup=InlineKeyboardMarkup(keyboard))
+
 
 # функция отрисовки меню-вопрос 'Проект "Альпы" 14:00 - 16:30'
 def alps_2_questuions_keyboard(update, context):
@@ -163,28 +215,18 @@ def alps_2_questuions_keyboard(update, context):
          InlineKeyboardButton('Колбин Дмитрий', callback_data='Alps_questuion_2.6')],
         [InlineKeyboardButton('Алексей Пушилин', callback_data='Alps_questuion_2.7')],
         [InlineKeyboardButton('Назад', callback_data='Alps_questuion_2.8')]
-        ]
-    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Альпы" c 14:00', reply_markup=InlineKeyboardMarkup(keyboard))
+    ]
+    context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Альпы" c 14:00',
+                             reply_markup=InlineKeyboardMarkup(keyboard))
 
-# это для отрисовки клавиатур по потокам
-block_entry = Block.objects.filter(flow_group__flow__title__contains='*Вступительные мероприятия')
-block_everest = Block.objects.filter(flow_group__flow__title__contains='*Поток "Эверест"')
-block_alps = Block.objects.filter(flow_group__flow__title__contains='*Поток "Альпы"')
-block_finish = Block.objects.filter(flow_group__flow__title__contains='*Заключительные мероприятия')
 
-# это для расшифровки каждого блока
-presentations_entry_1 = Presentation.objects.filter(block__title__contains='Дискуссия - пути развития рынка разработки.')
 
-presentations_everest_1 = Presentation.objects.filter(block__title__contains='Коммуникационные инновации')
-presentations_everest_2 = Presentation.objects.filter(block__title__contains='Построение предективной аналитики')
-presentations_everest_3 = Presentation.objects.filter(block__title__contains='Автоматизация рекламных коммуникаций')
-presentations_everest_4 = Presentation.objects.filter(block__title__contains='Системы управления коммуникациями')
 
-presentations_alps_1 = Presentation.objects.filter(block__title__contains='Автоматизация продаж')
-presentations_alps_2 = Presentation.objects.filter(block__title__contains='Построение предективной аналитики')
-presentations_alps_3 = Presentation.objects.filter(block__title__contains='Автоматизация рекламных коммуникаций')
 
-# функция обработки кнопок ветка "Программа"
+blokcs = Block.objects.all()
+flows = Flow.objects.all()
+
+# функция обработки кнопок
 def button(update, context):
     global flag
     global speaker_chat_id
@@ -196,49 +238,59 @@ def button(update, context):
     elif q.data == 'Start_2':
         return questions_keyboard(update, context)
     elif q.data == 'Program_1':
-        return table_blocks(update, context, bases=block_entry)
+        return table_blocks(update, context, bases=buttons_flow_names(structure=flows)['block_1'],
+                            button_name='Вступительные мероприятия')
     elif q.data == 'Program_2':
-        return table_blocks(update, context, bases=block_everest)
+        return table_blocks(update, context, bases=buttons_flow_names(structure=flows)['block_2'],
+                            button_name='Поток "Эверест"')
     elif q.data == 'Program_3':
-        return table_blocks(update, context, bases=block_alps)
+        return table_blocks(update, context, bases=buttons_flow_names(structure=flows)['block_3'],
+                            button_name='Поток "Альпы"')
     elif q.data == 'Program_4':
-        return table_blocks(update, context, bases=block_finish)
+        return table_blocks(update, context, bases=buttons_flow_names(structure=flows)['block_4'],
+                            button_name='Заключительные мероприятия')
     elif q.data == 'Main_menu':
         return main_keyboard(update, context)
-    elif q.data == '*Вступительные мероприятия_1':
-        return add_description_addition(update, context, title='Регистрация')
-    elif q.data == '*Вступительные мероприятия_2':
-        return info_blocks(update, context, bases=presentations_entry_1)
-    elif q.data == '*Вступительные мероприятия_3':
-        return add_description_addition(update, context, title='Нетворкинг')
+    elif q.data == 'Вступительные мероприятия_1':
+        return add_description_addition(update, context,
+                                        title=buttons_additional_block_names(structure=blokcs)['block_1'])
+    elif q.data == 'Вступительные мероприятия_2':
+        return info_blocks(update, context, bases=buttons_block_names(structure=blokcs)['block_2'])
+    elif q.data == 'Вступительные мероприятия_3':
+        return add_description_addition(update, context,
+                                        title=buttons_additional_block_names(structure=blokcs)['block_3'])
     elif q.data == 'Back':
         return program_keyboard(update, context)
-    elif q.data == '*Поток "Эверест"_1':
-        return info_blocks(update, context, bases=presentations_everest_1)
-    elif q.data == '*Поток "Эверест"_2':
-        return add_description_addition(update, context, title='Обед')
-    elif q.data == '*Поток "Эверест"_3':
-        return info_blocks(update, context, bases=presentations_everest_2)
-    elif q.data == '*Поток "Эверест"_4':
-        return info_blocks(update, context, bases=presentations_everest_3)
-    elif q.data == '*Поток "Эверест"_5':
-        return info_blocks(update, context, bases=presentations_everest_4)
+    elif q.data == 'Поток "Эверест"_1':
+        return info_blocks(update, context, bases=buttons_block_names(structure=blokcs)['block_4'])
+    elif q.data == 'Поток "Эверест"_2':
+        return add_description_addition(update, context,
+                                        title=buttons_additional_block_names(structure=blokcs)['block_5'])
+    elif q.data == 'Поток "Эверест"_3':
+        return info_blocks(update, context, bases=buttons_block_names(structure=blokcs)['block_6'])
+    elif q.data == 'Поток "Эверест"_4':
+        return info_blocks(update, context, bases=buttons_block_names(structure=blokcs)['block_7'])
+    elif q.data == 'Поток "Эверест"_5':
+        return info_blocks(update, context, bases=buttons_block_names(structure=blokcs)['block_8'])
     elif q.data == 'Back':
         return program_keyboard(update, context)
-    elif q.data == '*Поток "Альпы"_1':
-        return info_blocks(update, context, bases=presentations_alps_1)
-    elif q.data == '*Поток "Альпы"_2':
-        return add_description_addition(update, context, title='Нетворкинг', number=2)
-    elif q.data == '*Поток "Альпы"_3':
-        return info_blocks(update, context, bases=presentations_alps_2)
-    elif q.data == '*Поток "Альпы"_4':
-        return info_blocks(update, context, bases=presentations_alps_3)
+    elif q.data == 'Поток "Альпы"_1':
+        return info_blocks(update, context, bases=buttons_block_names(structure=blokcs)['block_9'])
+    elif q.data == 'Поток "Альпы"_2':
+        return add_description_addition(update, context,
+                                        title=buttons_additional_block_names(structure=blokcs)['block_10'], number=2)
+    elif q.data == 'Поток "Альпы"_3':
+        return info_blocks(update, context, bases=buttons_block_names(structure=blokcs)['block_11'])
+    elif q.data == 'Поток "Альпы"_4':
+        return info_blocks(update, context, bases=buttons_block_names(structure=blokcs)['block_12'])
     elif q.data == 'Back':
         return program_keyboard(update, context)
-    elif q.data == '*Заключительные мероприятия_1':
-        return add_description_addition(update, context, title='Нетворкинг', number=3)
-    elif q.data == '*Заключительные мероприятия_2':
-        return add_description_addition(update, context, title='Премия "BMA 2020"')
+    elif q.data == 'Заключительные мероприятия_1':
+        return add_description_addition(update, context,
+                                        title=buttons_additional_block_names(structure=blokcs)['block_13'], number=3)
+    elif q.data == 'Заключительные мероприятия_2':
+        return add_description_addition(update, context,
+                                        title=buttons_additional_block_names(structure=blokcs)['block_14'])
     elif q.data == 'Back':
         return program_keyboard(update, context)
     elif q.data == 'Questions_1':
@@ -499,12 +551,11 @@ def button(update, context):
 def forward_message(update, context):
     text = update.message.text
     if flag:
-        return context.bot.send_message(chat_id=speaker_chat_id, 
-                             text=text)
+        return context.bot.send_message(chat_id=speaker_chat_id,
+                                        text=text)
 
 
 class Command(BaseCommand):
-
     load_dotenv()
     token = os.getenv("TG_BOT_TOKEN")
     bot = telegram.Bot(token=token)
@@ -523,7 +574,6 @@ class Command(BaseCommand):
     button_handler = CallbackQueryHandler(button)
     dispatcher.add_handler(button_handler)
 
-    
     # запуск прослушивания сообщений
     updater.start_polling()
     # обработчик нажатия Ctrl+C
