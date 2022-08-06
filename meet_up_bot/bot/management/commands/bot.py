@@ -28,6 +28,7 @@ def main_keyboard(update, context):
                              reply_markup=InlineKeyboardMarkup(keyboard))
 
 
+# Программа
 # функция отрисовки меню 'Программа', 'Задать вопрос спикеру'
 def program_keyboard(update, context, title):
     keyboard = [[InlineKeyboardButton('Главное меню', callback_data='Main_menu')]]
@@ -46,6 +47,7 @@ def buttons_flow_names(structure):
         block = Block.objects.filter(flow_group__flow__title__contains=element.title)
         buttons[f'block_{number}'] = block
     return buttons
+
 
 
 # это функция для получения названия кнопок для блоков без презентаций
@@ -110,18 +112,7 @@ def add_description_addition(update, context, title, number=1):
     os.remove('инфо_блок.txt')
 
 
-
-
-# функция отрисовки меню всех блоков в ветке "Задать вопрос спикеру"
-# def speakers_keyboard(update, context):
-#     keyboard = [[InlineKeyboardButton('Главное меню', callback_data='Main_menu')]]
-#     flows = Flow.objects.all()
-#     for number, flow in enumerate(flows, start=1):
-#         button = [InlineKeyboardButton(f'{flow.title}', callback_data=f'Questions_{number}')]
-#         keyboard.append(button)
-#     context.bot.send_message(update.effective_chat.id, 'Ниже представлены спикеры по мероприятиям',
-#                              reply_markup=InlineKeyboardMarkup(keyboard))
-
+# Вопросы спикеру
 
 # функция отрисовки меню всех блоков в ветке "Задать вопрос спикеру"
 def table_speakers_blocks(update, context, bases, button_name):
@@ -132,40 +123,13 @@ def table_speakers_blocks(update, context, bases, button_name):
     context.bot.send_message(update.effective_chat.id, 'Спикеры этого блока',
                              reply_markup=InlineKeyboardMarkup(keyboard))
 
-# def buttons_speakers_names(structure):
-#     buttons = {}
-#     for number, element in enumerate(structure, start=1):
-#         block = Speaker.objects.filter(presentations__block__flow_group__flow__title__contains=element.title)
-#         buttons[f'seaction_{number}'] = block
-#     return buttons
-
-
+# это функция для получения названия кнопок c именами спикеров
 def buttons_speakers_names(structure):
     buttons = {}
     for number, element in enumerate(structure, start=1):
         block = Speaker.objects.filter(presentations__block__flow_group__title__contains=element.title)
         buttons[f'seaction_{number}'] = block
     return buttons
-# Speaker.objects.filter(Presentations__block__flow_group__title='*первая "эверест"'
-
-
-
-
-
-
-# функция отрисовки меню-вопрос 'Вступительные мероприятия'
-# def entry_questuions_keyboard(update, context):
-#     keyboard = [
-#         [InlineKeyboardButton('Фёдор Федоров', callback_data='Entry_questuion_1'),
-#          InlineKeyboardButton('Денис Денисов', callback_data='Entry_questuion_2')],
-#         [InlineKeyboardButton('Борис Борисов', callback_data='Entry_questuion_3'),
-#          InlineKeyboardButton('Виталий Витальев', callback_data='Entry_questuion_4')],
-#         [InlineKeyboardButton('Сергей Сергеев', callback_data='Entry_questuion_5'),
-#          InlineKeyboardButton('Константин Константинов', callback_data='Entry_questuion_6')],
-#         [InlineKeyboardButton('Назад', callback_data='Entry_questuion_7')]
-#     ]
-#     context.bot.send_message(update.effective_chat.id, 'Спикеры "вступления"',
-#                              reply_markup=InlineKeyboardMarkup(keyboard))
 
 
 # функция отрисовки меню-вопрос 'Проект "Эверест"'
@@ -179,38 +143,6 @@ def everest_questuions_keyboard(update, context):
                              reply_markup=InlineKeyboardMarkup(keyboard))
 
 
-# функция отрисовки меню-вопрос 'Проект "Эверест" 12:00 - 13:30'
-# def everest_1_questuions_keyboard(update, context):
-#     keyboard = [
-#         [InlineKeyboardButton('Анна Аннова', callback_data='Everest_questuion_1.1'),
-#          InlineKeyboardButton('Сергей Володин', callback_data='Everest_questuion_1.2')],
-#         [InlineKeyboardButton('Михаил Михалов', callback_data='Everest_questuion_1.3'),
-#          InlineKeyboardButton('Максим Максимов,', callback_data='Everest_questuion_1.4')],
-#         [InlineKeyboardButton('Артем Артемов', callback_data='Everest_questuion_1.5')],
-#         [InlineKeyboardButton('Назад', callback_data='Everest_questuion_1.6')]
-#     ]
-#     context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Эверест" c 12:00',
-#                              reply_markup=InlineKeyboardMarkup(keyboard))
-
-
-# функция отрисовки меню-вопрос 'Проект "Эверест" 14:00 - 16:30'
-# def everest_2_questuions_keyboard(update, context):
-#     keyboard = [
-#         [InlineKeyboardButton('Кирилл Кириенко', callback_data='Everest_questuion_2.1'),
-#          InlineKeyboardButton('Леся Самойлова', callback_data='Everest_questuion_2.2')],
-#         [InlineKeyboardButton('Надежда Бабкина', callback_data='Everest_questuion_2.3'),
-#          InlineKeyboardButton('Дмитрий Медведев', callback_data='Everest_questuion_2.4')],
-#         [InlineKeyboardButton('Евгений Евгеньев', callback_data='Everest_questuion_2.5'),
-#          InlineKeyboardButton('Екатерина Ворот', callback_data='Everest_questuion_2.6')],
-#         [InlineKeyboardButton('Татьяна Вилет', callback_data='Everest_questuion_2.7'),
-#          InlineKeyboardButton('Викторов Артем', callback_data='Everest_questuion_2.8')],
-#         [InlineKeyboardButton('Евгений Валуев', callback_data='Everest_questuion_2.9')],
-#         [InlineKeyboardButton('Назад', callback_data='Everest_questuion_2.10')]
-#     ]
-#     context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Эверест" c 14:00',
-#                              reply_markup=InlineKeyboardMarkup(keyboard))
-
-
 # функция отрисовки меню-вопрос 'Проект "Альпы"'
 def alps_questuions_keyboard(update, context):
     keyboard = [
@@ -221,39 +153,6 @@ def alps_questuions_keyboard(update, context):
     context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Альпы"',
                              reply_markup=InlineKeyboardMarkup(keyboard))
 
-
-# функция отрисовки меню-вопрос 'Проект "Альпы" 12:00 - 13:30'
-# def alps_1_questuions_keyboard(update, context):
-#     keyboard = [
-#         [InlineKeyboardButton('Сергей Кулькин', callback_data='Alps_questuion_1.1'),
-#          InlineKeyboardButton('Игорь Игорев', callback_data='Alps_questuion_1.2')],
-#         [InlineKeyboardButton('Дмитрий Бирюков', callback_data='Alps_questuion_1.3'),
-#          InlineKeyboardButton('Андрей Петров,', callback_data='Alps_questuion_1.4')],
-#         [InlineKeyboardButton('Назад', callback_data='Alps_questuion_1.5')]
-#     ]
-#     context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Альпы" c 12:00',
-#                              reply_markup=InlineKeyboardMarkup(keyboard))
-
-
-# функция отрисовки меню-вопрос 'Проект "Альпы" 14:00 - 16:30'
-# def alps_2_questuions_keyboard(update, context):
-#     keyboard = [
-#         [InlineKeyboardButton('Алексей Петров', callback_data='Alps_questuion_2.1'),
-#          InlineKeyboardButton('Константин Константинопольский', callback_data='Alps_questuion_2.2')],
-#         [InlineKeyboardButton('Александр Бродский', callback_data='Alps_questuion_2.3'),
-#          InlineKeyboardButton('Алексей Жирков', callback_data='Alps_questuion_2.4')],
-#         [InlineKeyboardButton('Денис Глушаков', callback_data='Alps_questuion_2.5'),
-#          InlineKeyboardButton('Колбин Дмитрий', callback_data='Alps_questuion_2.6')],
-#         [InlineKeyboardButton('Алексей Пушилин', callback_data='Alps_questuion_2.7')],
-#         [InlineKeyboardButton('Назад', callback_data='Alps_questuion_2.8')]
-#     ]
-#     context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Альпы" c 14:00',
-#                              reply_markup=InlineKeyboardMarkup(keyboard))
-
-
-
-
-
 blokcs = Block.objects.all()
 flows = Flow.objects.all()
 flows_group = Flow_group.objects.all()
@@ -261,7 +160,6 @@ speakers = buttons_speakers_names(structure=flows_group)
 flow_names = buttons_flow_names(structure=flows)
 aditional_block_names = buttons_additional_block_names(structure=blokcs)
 block_names = buttons_block_names(structure=blokcs)
-
 
 # функция обработки кнопок
 def button(update, context):
@@ -331,14 +229,11 @@ def button(update, context):
     elif q.data == 'Back':
         return program_keyboard(update, context, title='Program')
 
-
-
-
-
     elif q.data == 'Questions_1':
         return table_speakers_blocks(update, context,
                                      bases=speakers['seaction_1'],
                                      button_name='Entry_questuion')
+
     elif q.data == 'Questions_2':
         return everest_questuions_keyboard(update, context)
     elif q.data == 'Questions_3':
@@ -613,6 +508,8 @@ class Command(BaseCommand):
     global dispatcher
     updater = Updater(token=token)
     dispatcher = updater.dispatcher
+
+
     # обработчик команды '/start'
     start_handler = CommandHandler('start', start)
     dispatcher.add_handler(start_handler)
@@ -630,14 +527,3 @@ class Command(BaseCommand):
     # обработчик нажатия Ctrl+C
     updater.idle()
 
-# получаем все блоки для конкретного потока
-# block = Block.objects.filter(flow_group__flow__title__contains='Заключительные')
-# print(block)
-# все презентации для данного блока
-# presentations = Presentation.objects.filter(block__title__contains='*Дискуссия - пути развития рынка разработки.')
-# получить спикеров для конкрктной презентации
-# speakers = Speaker.objects.filter(Presentations__title__contains='Автоматизация запуска и контроля маркетинговых стратегий.')
-# получить спикеров группы потока
-# speakers = Speaker.objects.filter(Presentations__block__flow_group__title='*первая "эверест"')
-# получить спикеров конкетного потока
-# speakers = Speaker.objects.filter(Presentations__block__flow_group__flow__title='*Поток "Эверест"')
