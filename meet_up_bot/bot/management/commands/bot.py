@@ -48,7 +48,7 @@ def open_file(name):
     a.close()
     return data
 
-# функция расшифровки любого блока
+# функция расшифровки любого блока c презентациями
 def info_blocks(update, context, bases):
     with open('инфо_блок.txt', 'a') as info:
         info.write(f'{bases[0].block.start_time} - {bases[0].block.end_time} \n')
@@ -62,6 +62,16 @@ def info_blocks(update, context, bases):
     context.bot.send_message(update.effective_chat.id, open_file('инфо_блок.txt'))
     os.remove('инфо_блок.txt')
 
+# функция расшифровки любого блока без презентаций
+def add_description_addition(update, context, title, number=1):
+    blocks = Block.objects.filter(title__contains=title)
+    with open('инфо_блок.txt', 'a') as info:
+        info.write(f'{blocks[number-1].start_time} - {blocks[number-1].end_time} \n')
+        info.write(blocks[number-1].title + '\n')
+        info.write(blocks[number-1].description_addition + '\n')
+    context.bot.send_message(update.effective_chat.id, open_file('инфо_блок.txt'))
+    os.remove('инфо_блок.txt')
+
 # функция отрисовки меню 'Задать вопрос спикеру'
 def questions_keyboard(update, context):
     keyboard = [
@@ -71,8 +81,6 @@ def questions_keyboard(update, context):
         [InlineKeyboardButton('Главное меню', callback_data='Questions_4')]
     ]
     context.bot.send_message(update.effective_chat.id, 'Вот программа мероприятия', reply_markup=InlineKeyboardMarkup(keyboard))
-
-
 
 # функция отрисовки меню-вопрос 'Вступительные мероприятия'
 def entry_questuions_keyboard(update, context):
@@ -158,7 +166,6 @@ def alps_2_questuions_keyboard(update, context):
         ]
     context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Альпы" c 14:00', reply_markup=InlineKeyboardMarkup(keyboard))
 
-# flows = Flow.objects.all()
 # это для отрисовки клавиатур по потокам
 block_entry = Block.objects.filter(flow_group__flow__title__contains='*Вступительные мероприятия')
 block_everest = Block.objects.filter(flow_group__flow__title__contains='*Поток "Эверест"')
@@ -199,17 +206,17 @@ def button(update, context):
     elif q.data == 'Main_menu':
         return main_keyboard(update, context)
     elif q.data == '*Вступительные мероприятия_1':
-        pass
+        return add_description_addition(update, context, title='Регистрация')
     elif q.data == '*Вступительные мероприятия_2':
         return info_blocks(update, context, bases=presentations_entry_1)
     elif q.data == '*Вступительные мероприятия_3':
-        pass
+        return add_description_addition(update, context, title='Нетворкинг')
     elif q.data == 'Back':
         return program_keyboard(update, context)
     elif q.data == '*Поток "Эверест"_1':
         return info_blocks(update, context, bases=presentations_everest_1)
     elif q.data == '*Поток "Эверест"_2':
-        pass
+        return add_description_addition(update, context, title='Обед')
     elif q.data == '*Поток "Эверест"_3':
         return info_blocks(update, context, bases=presentations_everest_2)
     elif q.data == '*Поток "Эверест"_4':
@@ -221,18 +228,18 @@ def button(update, context):
     elif q.data == '*Поток "Альпы"_1':
         return info_blocks(update, context, bases=presentations_alps_1)
     elif q.data == '*Поток "Альпы"_2':
-        pass
+        return add_description_addition(update, context, title='Нетворкинг', number=2)
     elif q.data == '*Поток "Альпы"_3':
         return info_blocks(update, context, bases=presentations_alps_2)
     elif q.data == '*Поток "Альпы"_4':
         return info_blocks(update, context, bases=presentations_alps_3)
     elif q.data == 'Back':
         return program_keyboard(update, context)
-    elif q.data == 'Finish_1':
-        pass
-    elif q.data == 'Finish_2':
-        pass
-    elif q.data == 'Finish_3':
+    elif q.data == '*Заключительные мероприятия_1':
+        return add_description_addition(update, context, title='Нетворкинг', number=3)
+    elif q.data == '*Заключительные мероприятия_2':
+        return add_description_addition(update, context, title='Премия "BMA 2020"')
+    elif q.data == 'Back':
         return program_keyboard(update, context)
     elif q.data == 'Questions_1':
         return entry_questuions_keyboard(update, context)
@@ -521,3 +528,15 @@ class Command(BaseCommand):
     updater.start_polling()
     # обработчик нажатия Ctrl+C
     updater.idle()
+
+# получаем все блоки для конкретного потока
+# block = Block.objects.filter(flow_group__flow__title__contains='Заключительные')
+# print(block)
+# все презентации для данного блока
+# presentations = Presentation.objects.filter(block__title__contains='*Дискуссия - пути развития рынка разработки.')
+# получить спикеров для конкрктной презентации
+# speakers = Speaker.objects.filter(Presentations__title__contains='Автоматизация запуска и контроля маркетинговых стратегий.')
+# получить спикеров группы потока
+# speakers = Speaker.objects.filter(Presentations__block__flow_group__title='*первая "эверест"')
+# получить спикеров конкетного потока
+# speakers = Speaker.objects.filter(Presentations__block__flow_group__flow__title='*Поток "Эверест"')
