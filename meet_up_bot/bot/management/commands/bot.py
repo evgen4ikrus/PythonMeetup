@@ -55,7 +55,7 @@ def info_blocks(update, context, bases):
         info.write(bases[0].block.title + '\n' + '\n')
         for presentation in bases:
             info.write(presentation.title +'\n')
-            speakers = Speaker.objects.filter(Presentations__title=presentation)
+            speakers = Speaker.objects.filter(presentations__title=presentation)
             for speaker in speakers:
                 info.write(speaker.full_name +'\n')
                 info.write(speaker.job_title +'\n' + '\n')
