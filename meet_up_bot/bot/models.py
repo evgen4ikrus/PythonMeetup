@@ -8,7 +8,7 @@ class Flow(models.Model):
     
     class Meta:
         verbose_name_plural = "Мероприятия"
-        verbose_name = "Мероприятие"
+        verbose_name = "мероприятие"
         
 
 class Flow_group(models.Model):
@@ -28,7 +28,7 @@ class Flow_group(models.Model):
 
     class Meta:
         verbose_name_plural = "Группы блоков по времени"
-        verbose_name = "Группа блоков по времени"
+        verbose_name = "группу блоков по времени"
 
 
 class Block(models.Model):
@@ -47,8 +47,8 @@ class Block(models.Model):
         return f'{self.title}: {self.start_time} - {self.end_time}'
 
     class Meta:
-        verbose_name_plural = "Блоки выступлений/перерывов"
-        verbose_name = "Блок выступлений/перерывров"
+        verbose_name_plural = "Блоки выступлений/перерывы"
+        verbose_name = "блок выступлений/перерыв"
 
 
 class Speaker(models.Model):
@@ -61,7 +61,7 @@ class Speaker(models.Model):
 
     class Meta:
         verbose_name_plural = "Спикеры/организаторы"
-        verbose_name = "Спикер/организатор"
+        verbose_name = "спикера/организатора"
 
 
 class Presentation(models.Model):
@@ -85,4 +85,4 @@ class Presentation(models.Model):
 
     class Meta:
         verbose_name_plural = "Презантации"
-        verbose_name = "Презентация"
+        verbose_name = "презентацию"
