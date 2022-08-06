@@ -6,7 +6,8 @@ from telegram import InlineQueryResultArticle, InputTextMessageContent, InlineKe
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
 from telegram.ext import MessageHandler, Filters, InlineQueryHandler
 from django.core.management.base import BaseCommand
-from bot.models import Flow_group, Flow, Block
+from bot.models import Flow_group, Flow, Block, Presentation, Speaker
+
 
 # функция обработки команды '/start'
 def start(update, context):
@@ -27,31 +28,39 @@ def main_keyboard(update, context):
 def program_keyboard(update, context):
     keyboard=[[InlineKeyboardButton('Главное меню', callback_data='Main_menu')]]
     flows = Flow.objects.all()
-    for number, flow in enumerate(flows):
-        button = [InlineKeyboardButton(f'{flow.title}', callback_data=f'Program_{number+1}')]
+    for number, flow in enumerate(flows, start=1):
+        button = [InlineKeyboardButton(f'{flow.title}', callback_data=f'Program_{number}')]
         keyboard.append(button)
     context.bot.send_message(update.effective_chat.id, 'Вот программа мероприятия', reply_markup=InlineKeyboardMarkup(keyboard))
 
 # функция отрисовки меню всех блоков
 def table_blocks(update, context, bases):
     keyboard = [[InlineKeyboardButton('Назад', callback_data='Back')]]
-    for number, name in enumerate(bases):
-        button = [InlineKeyboardButton(f'{name.start_time} {name.title}', callback_data=f'{name.flow_group.flow.title}_{number+1}')]
+    for number, name in enumerate(bases, start=1):
+        button = [InlineKeyboardButton(f'{name.start_time} {name.title}', callback_data=f'{name.flow_group.flow.title}_{number}')]
         keyboard.append(button)
     context.bot.send_message(update.effective_chat.id, 'В этом блоке будет следующее', reply_markup=InlineKeyboardMarkup(keyboard))
 
-flows = Flow.objects.all()
-block_entry = Block.objects.filter(flow_group__flow__title__contains='*Вступительные мероприятия')
-block_everest = Block.objects.filter(flow_group__flow__title__contains='*Поток "Эверест"')
-block_alps = Block.objects.filter(flow_group__flow__title__contains='*Поток "Альпы"')
-block_finish = Block.objects.filter(flow_group__flow__title__contains='*Заключительные мероприятия')
+# функция открытия файла нужна для info_blocks
+def open_file(name):
+    a = open(name, 'r')
+    data = a.read()
+    a.close()
+    return data
 
-# def info_blocks(update, context, bases, name):
-#     print(bases.name.description_addition)
-#     context.bot.send_message(chat_id=update.effective_chat.id,
-#                              text="Здравствуйте. Это официальный бот по поддержке участников")
-
-
+# функция расшифровки любого блока
+def info_blocks(update, context, bases):
+    with open('инфо_блок.txt', 'a') as info:
+        info.write(f'{bases[0].block.start_time} - {bases[0].block.end_time} \n')
+        info.write(bases[0].block.title + '\n' + '\n')
+        for presentation in bases:
+            info.write(presentation.title +'\n')
+            speakers = Speaker.objects.filter(Presentations__title=presentation)
+            for speaker in speakers:
+                info.write(speaker.full_name +'\n')
+                info.write(speaker.job_title +'\n' + '\n')
+    context.bot.send_message(update.effective_chat.id, open_file('инфо_блок.txt'))
+    os.remove('инфо_блок.txt')
 
 # функция отрисовки меню 'Задать вопрос спикеру'
 def questions_keyboard(update, context):
@@ -149,6 +158,25 @@ def alps_2_questuions_keyboard(update, context):
         ]
     context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Альпы" c 14:00', reply_markup=InlineKeyboardMarkup(keyboard))
 
+# flows = Flow.objects.all()
+# это для отрисовки клавиатур по потокам
+block_entry = Block.objects.filter(flow_group__flow__title__contains='*Вступительные мероприятия')
+block_everest = Block.objects.filter(flow_group__flow__title__contains='*Поток "Эверест"')
+block_alps = Block.objects.filter(flow_group__flow__title__contains='*Поток "Альпы"')
+block_finish = Block.objects.filter(flow_group__flow__title__contains='*Заключительные мероприятия')
+
+# это для расшифровки каждого блока
+presentations_entry_1 = Presentation.objects.filter(block__title__contains='Дискуссия - пути развития рынка разработки.')
+
+presentations_everest_1 = Presentation.objects.filter(block__title__contains='Коммуникационные инновации')
+presentations_everest_2 = Presentation.objects.filter(block__title__contains='Построение предективной аналитики')
+presentations_everest_3 = Presentation.objects.filter(block__title__contains='Автоматизация рекламных коммуникаций')
+presentations_everest_4 = Presentation.objects.filter(block__title__contains='Системы управления коммуникациями')
+
+presentations_alps_1 = Presentation.objects.filter(block__title__contains='Автоматизация продаж')
+presentations_alps_2 = Presentation.objects.filter(block__title__contains='Построение предективной аналитики')
+presentations_alps_3 = Presentation.objects.filter(block__title__contains='Автоматизация рекламных коммуникаций')
+
 # функция обработки кнопок ветка "Программа"
 def button(update, context):
     global flag
@@ -171,34 +199,34 @@ def button(update, context):
     elif q.data == 'Main_menu':
         return main_keyboard(update, context)
     elif q.data == '*Вступительные мероприятия_1':
-        return info_blocks(update, context, bases=block_entry, name='*Регистрация')
-    elif q.data == '*Вступительные мероприятия_2':
         pass
+    elif q.data == '*Вступительные мероприятия_2':
+        return info_blocks(update, context, bases=presentations_entry_1)
     elif q.data == '*Вступительные мероприятия_3':
         pass
     elif q.data == 'Back':
         return program_keyboard(update, context)
-    elif q.data == 'Everest_1':
+    elif q.data == '*Поток "Эверест"_1':
+        return info_blocks(update, context, bases=presentations_everest_1)
+    elif q.data == '*Поток "Эверест"_2':
         pass
-    elif q.data == 'Everest_2':
-        pass
-    elif q.data == 'Everest_3':
-        pass
-    elif q.data == 'Everest_4':
-        pass
-    elif q.data == 'Everest_5':
-        pass
-    elif q.data == 'Everest_6':
+    elif q.data == '*Поток "Эверест"_3':
+        return info_blocks(update, context, bases=presentations_everest_2)
+    elif q.data == '*Поток "Эверест"_4':
+        return info_blocks(update, context, bases=presentations_everest_3)
+    elif q.data == '*Поток "Эверест"_5':
+        return info_blocks(update, context, bases=presentations_everest_4)
+    elif q.data == 'Back':
         return program_keyboard(update, context)
-    elif q.data == 'Alps_1':
+    elif q.data == '*Поток "Альпы"_1':
+        return info_blocks(update, context, bases=presentations_alps_1)
+    elif q.data == '*Поток "Альпы"_2':
         pass
-    elif q.data == 'Alps_2':
-        pass
-    elif q.data == 'Alps_3':
-        pass
-    elif q.data == 'Alps_4':
-        pass
-    elif q.data == 'Alps_5':
+    elif q.data == '*Поток "Альпы"_3':
+        return info_blocks(update, context, bases=presentations_alps_2)
+    elif q.data == '*Поток "Альпы"_4':
+        return info_blocks(update, context, bases=presentations_alps_3)
+    elif q.data == 'Back':
         return program_keyboard(update, context)
     elif q.data == 'Finish_1':
         pass
