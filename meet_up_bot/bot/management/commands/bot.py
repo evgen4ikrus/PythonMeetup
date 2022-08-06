@@ -1,18 +1,22 @@
 import telegram
+import telebot #pyTelegramBotAPI-4.6.1
 from dotenv import load_dotenv
 import os
 import time
 from telegram import InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler
+from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, ConversationHandler
 from telegram.ext import MessageHandler, Filters, InlineQueryHandler
 from django.core.management.base import BaseCommand
 from bot.models import Flow_group, Flow, Block
 
 # функция обработки команды '/start'
 def start(update, context):
+    #global student_chat_id
+    #student_chat_id = update.effective_chat.id
+    
     context.bot.send_message(chat_id=update.effective_chat.id,
                              text="Здравствуйте. Это официальный бот по поддержке участников")
-    time.sleep(4)
+    time.sleep(1)
     return main_keyboard(update, context)
 
 # функция отрисовки начальной клавиатуры
@@ -152,7 +156,8 @@ def alps_2_questuions_keyboard(update, context):
 # функция обработки кнопок ветка "Программа"
 def button(update, context):
     global flag
-    global speaker_chat_id
+    
+    
     flag = False
     q = update.callback_query
     q.answer()
@@ -215,47 +220,30 @@ def button(update, context):
     elif q.data == 'Questions_4':
         return main_keyboard(update, context)
     elif q.data == 'Entry_questuion_1':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Федору')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '1774521104'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
+    
     elif q.data == 'Entry_questuion_2':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Денису')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Entry_questuion_3':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Борису')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)        
     elif q.data == 'Entry_questuion_4':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Виталию')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Entry_questuion_5':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Сергею')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Entry_questuion_6':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Константину')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Entry_questuion_7':
         flag = False
         return questions_keyboard(update, context)
@@ -266,106 +254,64 @@ def button(update, context):
     elif q.data == 'Everest_questuion_3':
         return questions_keyboard(update, context)
     elif q.data == 'Everest_questuion_1.1':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Анне')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Everest_questuion_1.2':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Сергею')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Everest_questuion_1.3':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Михаилу')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Everest_questuion_1.4':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Максиму')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Everest_questuion_1.5':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Артему')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Everest_questuion_1.6':
         flag = False
         return everest_questuions_keyboard(update, context)
     elif q.data == 'Everest_questuion_2.1':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Кириллу')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Everest_questuion_2.2':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Леси')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Everest_questuion_2.3':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Надежде')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Everest_questuion_2.4':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Дмитрию')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Everest_questuion_2.5':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Евгению')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Everest_questuion_2.6':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Екатерине')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Everest_questuion_2.7':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Татьяне')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Everest_questuion_2.8':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Артему')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Everest_questuion_2.9':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Евгению')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Everest_questuion_2.10':
         flag = False
         return everest_questuions_keyboard(update, context)
@@ -376,106 +322,90 @@ def button(update, context):
     elif q.data == 'Alps_questuion_3':
         return questions_keyboard(update, context)
     elif q.data == 'Alps_questuion_1.1':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Сергею')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Alps_questuion_1.2':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Игорю')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Alps_questuion_1.3':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Дмитрию')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Alps_questuion_1.4':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Андрею')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Alps_questuion_1.5':
         flag = False
         return alps_questuions_keyboard(update, context)
     elif q.data == 'Alps_questuion_2.1':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Алексею')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Alps_questuion_2.2':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Константину')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Alps_questuion_2.3':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Александру')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Alps_questuion_2.4':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Алексею')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Alps_questuion_2.5':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Денису')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Alps_questuion_2.6':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Дмитрию')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Alps_questuion_2.7':
-        flag = True
         context.bot.send_message(update.effective_chat.id, 'Введите вопрос Алексею')
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        speaker_chat_id = '-1001758552115'
-        forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-        return dispatcher.add_handler(forward_message_handler)
+        conversation(update, context)
     elif q.data == 'Alps_questuion_2.8':
         flag = False
         return alps_questuions_keyboard(update, context)
 
 
-# функция пересылки сообщения спикеру
-def forward_message(update, context):
-    text = update.message.text
-    if flag:
-        return context.bot.send_message(chat_id=speaker_chat_id, 
-                             text=text)
-
+def conversation(update, context):
+    flag = True
+    context.bot.send_message(update.effective_chat.id, 'Введите вопрос Федору')
+    context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
+    speaker_chat_id = '-1001758552115'#1774521104
+    student_chat_id = update.effective_chat.id
+    def forward_message(update, context):
+        text = update.message.text
+        nonlocal speaker_chat_id
+        if flag:
+            context.bot.send_message(chat_id=speaker_chat_id, text=text)
+    def forward_message_student(update, context):
+        text = update.message.text
+        nonlocal student_chat_id 
+        if flag:
+            context.bot.send_message(chat_id=student_chat_id, text=text)        
+    forward_message_handler_student = MessageHandler(Filters.reply, forward_message_student)
+    dispatcher.add_handler(forward_message_handler_student)        
+    forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
+    dispatcher.add_handler(forward_message_handler)    
 
 class Command(BaseCommand):
 
     load_dotenv()
     token = os.getenv("TG_BOT_TOKEN")
+    global bot
     bot = telegram.Bot(token=token)
+    global bot2
+    bot2 = telebot.TeleBot(token)
     global dispatcher
     updater = Updater(token=token)
     dispatcher = updater.dispatcher
+       
     # обработчик команды '/start'
     start_handler = CommandHandler('start', start)
     dispatcher.add_handler(start_handler)
@@ -488,7 +418,6 @@ class Command(BaseCommand):
     button_handler = CallbackQueryHandler(button)
     dispatcher.add_handler(button_handler)
 
-    
     # запуск прослушивания сообщений
     updater.start_polling()
     # обработчик нажатия Ctrl+C
