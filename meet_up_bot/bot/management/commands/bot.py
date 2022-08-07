@@ -99,6 +99,7 @@ def info_blocks(update, context, bases):
                 info.write(speaker.job_title + '\n' + '\n')
     context.bot.send_message(update.effective_chat.id, open_file('инфо_блок.txt'))
     os.remove('инфо_блок.txt')
+    return program_keyboard(update, context, title='Program')
 
 
 # функция расшифровки любого блока без презентаций
@@ -160,11 +161,9 @@ flow_names = buttons_flow_names(structure=flows)
 aditional_block_names = buttons_additional_block_names(structure=blokcs)
 block_names = buttons_block_names(structure=blokcs)
 
-# функция обработки кнопок
+
 def button(update, context):
     global flag
-    
-    
     flag = False
     q = update.callback_query
     q.answer()
@@ -229,11 +228,14 @@ def button(update, context):
     elif q.data == 'Back':
         return program_keyboard(update, context, title='Program')
 
+
+
+
+
     elif q.data == 'Questions_1':
         return table_speakers_blocks(update, context,
                                      bases=speakers['seaction_1'],
                                      button_name='Entry_questuion')
-
     elif q.data == 'Questions_2':
         return everest_questuions_keyboard(update, context)
     elif q.data == 'Questions_3':
@@ -241,30 +243,35 @@ def button(update, context):
     elif q.data == 'Main_menu':
         return main_keyboard(update, context)
     elif q.data == 'Entry_questuion_1':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Федору')
+        speaker = speakers['seaction_1'][0]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
-    
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Entry_questuion_2':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Денису')
+        speaker = speakers['seaction_1'][1]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Entry_questuion_3':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Борису')
+        speaker = speakers['seaction_1'][2]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)        
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Entry_questuion_4':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Виталию')
+        speaker = speakers['seaction_1'][3]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Entry_questuion_5':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Сергею')
+        speaker = speakers['seaction_1'][4]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Entry_questuion_6':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Константину')
+        speaker = speakers['seaction_1'][5]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Back_speakers':
         return program_keyboard(update, context, title='Questions')
     elif q.data == 'Everest_questuion_1':
@@ -278,67 +285,81 @@ def button(update, context):
     elif q.data == 'Back_speakers':
         return program_keyboard(update, context, title='Questions')
     elif q.data == 'Everest_questuion_1_1':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Анне')
+        speaker = speakers['seaction_2'][0]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Everest_questuion_1_2':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Сергею')
+        speaker = speakers['seaction_2'][1]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Everest_questuion_1_3':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Михаилу')
+        speaker = speakers['seaction_2'][2]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Everest_questuion_1_4':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Максиму')
+        speaker = speakers['seaction_2'][3]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Everest_questuion_1_5':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Артему')
+        speaker = speakers['seaction_2'][4]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
-    elif q.data == 'Everest_questuion_1_6':
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
+    elif q.data == 'Back_speakers':
         flag = False
-        return everest_questuions_keyboard(update, context)
+        return program_keyboard(update, context, title='Questions')
     elif q.data == 'Everest_questuion_2_1':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Кириллу')
+        speaker = speakers['seaction_3'][0]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Everest_questuion_2_2':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Леси')
+        speaker = speakers['seaction_3'][1]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Everest_questuion_2_3':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Надежде')
+        speaker = speakers['seaction_3'][2]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Everest_questuion_2_4':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Дмитрию')
+        speaker = speakers['seaction_3'][3]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Everest_questuion_2_5':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Евгению')
+        speaker = speakers['seaction_3'][4]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Everest_questuion_2_6':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Екатерине')
+        speaker = speakers['seaction_3'][5]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Everest_questuion_2_7':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Татьяне')
+        speaker = speakers['seaction_3'][6]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Everest_questuion_2_8':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Артему')
+        speaker = speakers['seaction_3'][7]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Everest_questuion_2_9':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Евгению')
+        speaker = speakers['seaction_3'][8]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
-    elif q.data == 'Everest_questuion_2_10':
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
+    elif q.data == 'Back_speakers':
         flag = False
-        return everest_questuions_keyboard(update, context)
+        return program_keyboard(update, context, title='Questions')
     elif q.data == 'Alps_questuion_1':
         return table_speakers_blocks(update, context,
                                      bases=speakers['seaction_4'],
@@ -350,69 +371,80 @@ def button(update, context):
     elif q.data == 'Back_speakers':
         return program_keyboard(update, context, title='Questions')
     elif q.data == 'Alps_questuion_1_1':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Сергею')
+        speaker = speakers['seaction_4'][0]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Alps_questuion_1_2':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Игорю')
+        speaker = speakers['seaction_4'][1]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Alps_questuion_1_3':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Дмитрию')
+        speaker = speakers['seaction_4'][2]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Alps_questuion_1_4':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Андрею')
+        speaker = speakers['seaction_4'][3]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
-    elif q.data == 'Alps_questuion_1_5':
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
+    elif q.data == 'Back_speakers':
         flag = False
-        return alps_questuions_keyboard(update, context)
+        return program_keyboard(update, context, title='Questions')
     elif q.data == 'Alps_questuion_2_1':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Алексею')
+        speaker = speakers['seaction_5'][0]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Alps_questuion_2_2':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Константину')
+        speaker = speakers['seaction_5'][0]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Alps_questuion_2_3':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Александру')
+        speaker = speakers['seaction_5'][1]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Alps_questuion_2_4':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Алексею')
+        speaker = speakers['seaction_5'][2]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Alps_questuion_2_5':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Денису')
+        speaker = speakers['seaction_5'][3]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Alps_questuion_2_6':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Дмитрию')
+        speaker = speakers['seaction_5'][4]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Alps_questuion_2_7':
-        context.bot.send_message(update.effective_chat.id, 'Введите вопрос Алексею')
+        speaker = speakers['seaction_5'][5]
+        context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
         conversation(update, context)
-    elif q.data == 'Alps_questuion_2_8':
+    elif q.data == 'Back_speakers':
         flag = False
-        return alps_questuions_keyboard(update, context)
+        return program_keyboard(update, context, title='Questions')
 
 
-def conversation(update, context):
+def conversation(update, context, speaker_chat_id):
     flag = True
-    context.bot.send_message(update.effective_chat.id, 'Введите вопрос Федору')
-    context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-    speaker_chat_id = '-1001758552115'
+    # context.bot.send_message(update.effective_chat.id, 'Введите вопрос Федору')
+    # context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
+    # speaker_chat_id = '-1001758552115'
     def forward_message(update, context):
         nonlocal speaker_chat_id
         if flag:
-            forwarded = update.message.forward(chat_id='-1001758552115')
+            forwarded = update.message.forward(chat_id=speaker_chat_id)
             if not forwarded.forward_from:
                 context.bot.send_message(
-                        chat_id='-1001758552115',
+                        chat_id=speaker_chat_id,
                         reply_to_message_id=forwarded.message_id,
                         text=f'{update.message.from_user.id}'
                     )            
