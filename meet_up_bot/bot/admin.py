@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Block, Speaker, Presentation, Flow, Flow_group
+
+from .models import Block, Flow, Flow_group, Presentation, Speaker
 
 
 @admin.register(Block)
