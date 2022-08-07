@@ -68,7 +68,7 @@ def buttons_block_names(structure):
 
 # функция отрисовки меню всех блоков в ветке "Программа"
 def table_blocks(update, context, bases, button_name):
-    keyboard = [[InlineKeyboardButton('↩️Назад', callback_data='Back')]]
+    keyboard = [[InlineKeyboardButton('↩️ Назад', callback_data='Back')]]
     for number, name in enumerate(bases, start=1):
         button = [InlineKeyboardButton(f'{name.start_time} {name.title}',
                                        callback_data=f'{button_name}_{number}')]
@@ -116,7 +116,7 @@ def add_description_addition(update, context, title, number=1):
 
 # функция отрисовки меню всех блоков в ветке "Задать вопрос спикеру"
 def table_speakers_blocks(update, context, bases, button_name):
-    keyboard = [[InlineKeyboardButton('Назад', callback_data='↩ Back_speakers')]]
+    keyboard = [[InlineKeyboardButton('↩️Назад', callback_data='Back_speakers')]]
     for number, name in enumerate(bases, start=1):
         button = [InlineKeyboardButton(f'{name.full_name} {name.job_title}',
                                        callback_data=f'{button_name}_{number}')]
@@ -139,7 +139,7 @@ def everest_questuions_keyboard(update, context):
     keyboard = [
         [InlineKeyboardButton('12:00 – 13:30', callback_data='Everest_questuion_1'),
          InlineKeyboardButton('14:00 – 16:30', callback_data='Everest_questuion_2')],
-        [InlineKeyboardButton('Назад', callback_data='Back_speakers')]
+        [InlineKeyboardButton('↩️Назад', callback_data='Back_speakers')]
     ]
     context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Эверест"',
                              reply_markup=InlineKeyboardMarkup(keyboard))
