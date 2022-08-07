@@ -494,3 +494,4 @@ class Command(BaseCommand):
     # обработчик нажатия Ctrl+C
     updater.idle()
 
+# Финалочка
