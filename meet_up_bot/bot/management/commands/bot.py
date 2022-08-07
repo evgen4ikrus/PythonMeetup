@@ -227,11 +227,6 @@ def button(update, context):
                                         title=aditional_block_names['block_14'])
     elif q.data == 'Back':
         return program_keyboard(update, context, title='Program')
-
-
-
-
-
     elif q.data == 'Questions_1':
         return table_speakers_blocks(update, context,
                                      bases=speakers['seaction_1'],
@@ -435,9 +430,6 @@ def button(update, context):
 
 def conversation(update, context, speaker_chat_id):
     flag = True
-    # context.bot.send_message(update.effective_chat.id, 'Введите вопрос Федору')
-    # context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-    # speaker_chat_id = '-1001758552115'
     def forward_message(update, context):
         nonlocal speaker_chat_id
         if flag:
