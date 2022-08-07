@@ -1,17 +1,16 @@
 import os
 import time
-import telegram
-from telegram import InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import MessageHandler, Filters, InlineQueryHandler,Updater, CommandHandler, CallbackQueryHandler, ConversationHandler
 
+import telegram
 from bot.models import Flow, Block, Presentation, Speaker, Flow_group
 from django.core.management.base import BaseCommand
 from dotenv import load_dotenv
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import MessageHandler, Filters, Updater, CommandHandler, CallbackQueryHandler
 
 
 # функция обработки команды '/start'
 def start(update, context):
-        
     context.bot.send_message(chat_id=update.effective_chat.id,
                              text="Здравствуйте. Это официальный бот по поддержке участников")
     time.sleep(1)
@@ -49,7 +48,6 @@ def buttons_flow_names(structure):
     return buttons
 
 
-
 # это функция для получения названия кнопок для блоков без презентаций
 def buttons_additional_block_names(structure):
     buttons = {}
@@ -72,7 +70,8 @@ def buttons_block_names(structure):
 def table_blocks(update, context, bases, button_name):
     keyboard = [[InlineKeyboardButton('Назад', callback_data='Back')]]
     for number, name in enumerate(bases, start=1):
-        button = [InlineKeyboardButton(f'{name.start_time} {name.title}', callback_data=f'{button_name}_{number}')]
+        button = [InlineKeyboardButton(f'{name.start_time} {name.title}',
+                                       callback_data=f'{button_name}_{number}')]
         keyboard.append(button)
     context.bot.send_message(update.effective_chat.id, 'В этом блоке будет следующее',
                              reply_markup=InlineKeyboardMarkup(keyboard))
@@ -112,16 +111,19 @@ def add_description_addition(update, context, title, number=1):
     context.bot.send_message(update.effective_chat.id, open_file('инфо_блок.txt'))
     os.remove('инфо_блок.txt')
 
+
 # Вопросы спикеру
 
 # функция отрисовки меню всех блоков в ветке "Задать вопрос спикеру"
 def table_speakers_blocks(update, context, bases, button_name):
     keyboard = [[InlineKeyboardButton('Назад', callback_data='Back_speakers')]]
     for number, name in enumerate(bases, start=1):
-        button = [InlineKeyboardButton(f'{name.full_name} {name.job_title}', callback_data=f'{button_name}_{number}')]
+        button = [InlineKeyboardButton(f'{name.full_name} {name.job_title}',
+                                       callback_data=f'{button_name}_{number}')]
         keyboard.append(button)
     context.bot.send_message(update.effective_chat.id, 'Спикеры этого блока',
                              reply_markup=InlineKeyboardMarkup(keyboard))
+
 
 # это функция для получения названия кнопок c именами спикеров
 def buttons_speakers_names(structure):
@@ -153,16 +155,15 @@ def alps_questuions_keyboard(update, context):
     context.bot.send_message(update.effective_chat.id, 'Спикеры "Проект "Альпы"',
                              reply_markup=InlineKeyboardMarkup(keyboard))
 
-blokcs = Block.objects.all()
-flows = Flow.objects.all()
-flows_group = Flow_group.objects.all()
-speakers = buttons_speakers_names(structure=flows_group)
-flow_names = buttons_flow_names(structure=flows)
-aditional_block_names = buttons_additional_block_names(structure=blokcs)
-block_names = buttons_block_names(structure=blokcs)
-
 
 def button(update, context):
+    blokcs = Block.objects.all()
+    flows = Flow.objects.all()
+    flows_group = Flow_group.objects.all()
+    speakers = buttons_speakers_names(structure=flows_group)
+    flow_names = buttons_flow_names(structure=flows)
+    aditional_block_names = buttons_additional_block_names(structure=blokcs)
+    block_names = buttons_block_names(structure=blokcs)
     global flag
     flag = False
     q = update.callback_query
@@ -194,7 +195,7 @@ def button(update, context):
         return add_description_addition(update, context,
                                         title=aditional_block_names['block_3'])
     elif q.data == 'Back':
-        return program_keyboard(update, context,title='Program')
+        return program_keyboard(update, context, title='Program')
     elif q.data == 'Поток "Эверест"_1':
         return info_blocks(update, context, bases=block_names['block_4'])
     elif q.data == 'Поток "Эверест"_2':
@@ -361,8 +362,8 @@ def button(update, context):
                                      button_name='Alps_questuion_1')
     elif q.data == 'Alps_questuion_2':
         return table_speakers_blocks(update, context,
-                             bases=speakers['seaction_5'],
-                             button_name='Alps_questuion_2')
+                                     bases=speakers['seaction_5'],
+                                     button_name='Alps_questuion_2')
     elif q.data == 'Back_speakers':
         return program_keyboard(update, context, title='Questions')
     elif q.data == 'Alps_questuion_1_1':
@@ -430,16 +431,18 @@ def button(update, context):
 
 def conversation(update, context, speaker_chat_id):
     flag = True
+
     def forward_message(update, context):
         nonlocal speaker_chat_id
         if flag:
             forwarded = update.message.forward(chat_id=speaker_chat_id)
             if not forwarded.forward_from:
                 context.bot.send_message(
-                        chat_id=speaker_chat_id,
-                        reply_to_message_id=forwarded.message_id,
-                        text=f'{update.message.from_user.id}'
-                    )            
+                    chat_id=speaker_chat_id,
+                    reply_to_message_id=forwarded.message_id,
+                    text=f'{update.message.from_user.id}'
+                )
+
     def forward_message_student(update, context):
         user_id = None
         if update.message.reply_to_message.forward_from:
@@ -451,14 +454,16 @@ def conversation(update, context, speaker_chat_id):
                 user_id = None
         if user_id:
             context.bot.copy_message(
-            message_id=update.message.message_id,
-            chat_id=user_id,
-            from_chat_id=update.message.chat_id
-        )        
+                message_id=update.message.message_id,
+                chat_id=user_id,
+                from_chat_id=update.message.chat_id
+            )
+
     forward_message_handler_student = MessageHandler(Filters.reply, forward_message_student)
-    dispatcher.add_handler(forward_message_handler_student)        
+    dispatcher.add_handler(forward_message_handler_student)
     forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
-    dispatcher.add_handler(forward_message_handler)    
+    dispatcher.add_handler(forward_message_handler)
+
 
 class Command(BaseCommand):
     load_dotenv()
