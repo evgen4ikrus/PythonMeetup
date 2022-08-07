@@ -411,18 +411,32 @@ def conversation(update, context):
     flag = True
     context.bot.send_message(update.effective_chat.id, 'Введите вопрос Федору')
     context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-    speaker_chat_id = '-1001758552115'#1774521104
-    student_chat_id = update.effective_chat.id
+    speaker_chat_id = '-1001758552115'
     def forward_message(update, context):
-        text = update.message.text
         nonlocal speaker_chat_id
         if flag:
-            context.bot.send_message(chat_id=speaker_chat_id, text=text)
+            forwarded = update.message.forward(chat_id='-1001758552115')
+            if not forwarded.forward_from:
+                context.bot.send_message(
+                        chat_id='-1001758552115',
+                        reply_to_message_id=forwarded.message_id,
+                        text=f'{update.message.from_user.id}'
+                    )            
     def forward_message_student(update, context):
-        text = update.message.text
-        nonlocal student_chat_id 
-        if flag:
-            context.bot.send_message(chat_id=student_chat_id, text=text)        
+        user_id = None
+        if update.message.reply_to_message.forward_from:
+            user_id = update.message.reply_to_message.forward_from.id
+        elif update.message.reply_to_message.text:
+            try:
+                user_id = int(update.message.reply_to_message.text.split('\n')[0])
+            except ValueError:
+                user_id = None
+        if user_id:
+            context.bot.copy_message(
+            message_id=update.message.message_id,
+            chat_id=user_id,
+            from_chat_id=update.message.chat_id
+        )        
     forward_message_handler_student = MessageHandler(Filters.reply, forward_message_student)
     dispatcher.add_handler(forward_message_handler_student)        
     forward_message_handler = MessageHandler(Filters.text & (~Filters.command), forward_message)
