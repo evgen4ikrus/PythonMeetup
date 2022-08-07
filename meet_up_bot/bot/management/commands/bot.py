@@ -95,7 +95,8 @@ def info_blocks(update, context, bases):
             speakers = Speaker.objects.filter(presentations__title=presentation)
             for speaker in speakers:
                 info.write(speaker.full_name + '\n')
-                info.write(speaker.job_title + '\n' + '\n')
+                info.write(speaker.job_title + '\n')
+            info.write('\n')
     context.bot.send_message(update.effective_chat.id, open_file('инфо_блок.txt'))
     os.remove('инфо_блок.txt')
     return program_keyboard(update, context, title='Program')
@@ -110,6 +111,7 @@ def add_description_addition(update, context, title, number=1):
         info.write(blocks[number - 1].description_addition + '\n')
     context.bot.send_message(update.effective_chat.id, open_file('инфо_блок.txt'))
     os.remove('инфо_блок.txt')
+    return program_keyboard(update, context, title='Program')
 
 
 # Вопросы спикеру
@@ -425,7 +427,7 @@ def button(update, context):
         speaker = speakers['seaction_5'][6]
         context.bot.send_message(update.effective_chat.id, f"Введите вопрос {speaker}")
         context.bot.send_message(update.effective_chat.id, 'Чтобы сменить спикера, нажмите кнопку "Назад"')
-        conversation(update, context)
+        conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Back_speakers':
         flag = False
         return program_keyboard(update, context, title='Questions')
