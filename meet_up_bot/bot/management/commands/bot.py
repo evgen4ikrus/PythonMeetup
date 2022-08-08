@@ -209,6 +209,7 @@ def button(update, context):
     aditional_block_names = buttons_additional_block_names(structure=blokcs)
     block_names = buttons_block_names(structure=blokcs)
     global flag
+    global speaker_chat_id
     flag = False
     q = update.callback_query
     q.answer()
@@ -509,7 +510,6 @@ def button(update, context):
         conversation(update, context, speaker_chat_id=speaker.id_telegram)
     elif q.data == 'Alps_questuion_1_2':
         speaker = speakers['seaction_4'][1]
-        print(speaker)
         context.bot.send_message(update.effective_chat.id,
                                  f"Введите вопрос {speaker}")
         context.bot.send_message(
@@ -611,17 +611,18 @@ def button(update, context):
 
 
 def conversation(update, context, speaker_chat_id):
+    global flag
     flag = True
-
+    speaker_chat_id = speaker_chat_id
     def forward_message(update, context):
-        nonlocal speaker_chat_id
+        global speaker_chat_id
         if flag:
             forwarded = update.message.forward(chat_id=speaker_chat_id)
             if not forwarded.forward_from:
                 context.bot.send_message(
                     chat_id=speaker_chat_id,
                     reply_to_message_id=forwarded.message_id,
-                    text=f'{update.message.from_user.id}'
+                    text=update.message.from_user.id
                 )
 
     def forward_message_student(update, context):
