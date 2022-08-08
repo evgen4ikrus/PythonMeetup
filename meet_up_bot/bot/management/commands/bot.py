@@ -669,12 +669,14 @@ def conversation(update, context, speaker_chat_id):
             except ValueError:
                 user_id = None
         if user_id:
-            context.bot.copy_message(
-                message_id=update.message.message_id,
-                chat_id=user_id,
-                from_chat_id=update.message.chat_id
-            )
-
+            forwarded = update.message.forward(chat_id=user_id)
+            if not forwarded.forward_from:
+                context.bot.send_message(
+                    chat_id=user_id,
+                    reply_to_message_id=forwarded.message_id,
+                    text=update.message.from_user.id
+                )            
+            
     forward_message_handler_student = MessageHandler(Filters.reply,
                                                      forward_message_student)
     dispatcher.add_handler(forward_message_handler_student)
